@@ -8,8 +8,8 @@ TEST = "zarr+minio"
 MPIRUN = "/home/niyiyu/anaconda3/envs/asdf/bin/mpirun"
 PYTHON = "/home/niyiyu/anaconda3/envs/asdf/bin/python"
 
-for NPROC in [48, 32, 16, 8, 4, 2, 1]:
-    for _ in range(3):
+for NPROC in [16]:
+    for _ in range(1):
         t0 = time.time()
 
         if TEST == "zarr+minio":
@@ -21,5 +21,5 @@ for NPROC in [48, 32, 16, 8, 4, 2, 1]:
         t = time.time() - t0
 
         print("Test finished in %.3f seconds" % t)
-        os.system(f"echo '500,{TEST},pnwstore1,cascadia,{NPROC},%.3f' >> ../docs/test.csv" % t)
+        #os.system(f"echo '500,{TEST},pnwstore1,cascadia,{NPROC},%.3f' >> ../docs/test.csv" % t)
         
