@@ -1,0 +1,11 @@
+chunksize_dim1,conversion_time_per_h5,number_of_objects_per_h5,size_zarr_per_h5_gb,source,dest,nproc,computing_time
+1,119.147,47516,1.16,sermeq,pnwstore1,16,61.880
+10,40.905,4766,1.15,sermeq,pnwstore1,16,77.606
+50,32.494,966,1.15,sermeq,pnwstore1,16,101.610
+100,28.248,491,1.15,sermeq,pnwstore1,16,163.650
+200,25.291,254,1.15,sermeq,pnwstore1,16,269.2522
+500,23.419,111,1.15,sermeq,pnwstore1,16,576.233
+1000,22.918,64,1.15,sermeq,pnwstore1,16,900
+5000,22.255,26,1.15,sermeq,pnwstore1,16,900
+10000,21.285,21,1.15,sermeq,pnwstore1,16,900
+,,,,,,16,31.211

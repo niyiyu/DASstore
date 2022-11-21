@@ -1,7 +1,8 @@
 import time
 import os
 
-TEST = "zarr+minio"
+# TEST = "zarr+minio"
+TEST = "zarr+local"
 # TEST = "h5+local"
 # TEST = "h5+crossmount"
 
@@ -18,6 +19,8 @@ for NPROC in [16]:
             os.system(f"{MPIRUN} -np {NPROC} {PYTHON} ./mpi_crossmount_h5.py")
         elif TEST == 'h5+local':
             os.system(f"{MPIRUN} -np {NPROC} {PYTHON} ./mpi_local_h5.py")
+        elif TEST == 'zarr+local':
+            os.system(f"{MPIRUN} -np {NPROC} {PYTHON} ./mpi_local_zarr.py")
         t = time.time() - t0
 
         print("Test finished in %.3f seconds" % t)

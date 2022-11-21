@@ -23,7 +23,7 @@ for idx, icha in enumerate(channel_index):
         d = np.zeros(120000)
         for i in range(10):
             # concatenate 10 minutes of data
-            z = zarr.open_group(f"simplecache::s3://OOI-DAS-200/2021-11-02T000{i}14Z.zarr", 
+            z = zarr.open_group(f"simplecache::s3://OOI-DAS-10/2021-11-02T000{i}14Z.zarr", 
                         storage_options = {"s3":{
                                 # for public data (anonymous access):
                                 "anon": True,
