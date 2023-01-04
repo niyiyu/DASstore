@@ -45,13 +45,13 @@ for file in tqdm(files, position=0, leave=True):
         'SampleCount':('time', hf['Acquisition']['Raw[0]']['Custom']['SampleCount'])}
     )
     
-    print('write to zarr...                                    ', end="\r")
+    print('write to zarr...                                                        ', end="\r")
     # create new zarr store if beginning of loop otherwize, append in time dimension
-    if first_loop:
-        first_loop = False
-        ds.to_zarr('abfs://zarr/SouthCable_Tx.zarr', storage_options=storage_options, mode='w-')
-    else:
-        ds.to_zarr('abfs://zarr/SouthCable_Tx.zarr', storage_options=storage_options, append_dim='time')
+    # if first_loop:
+    #    first_loop = False
+    #    ds.to_zarr('abfs://zarr/SouthCable_Tx.zarr', storage_options=storage_options, mode='w-')
+    #else:
+    ds.to_zarr('abfs://zarr/SouthCable_Tx.zarr', storage_options=storage_options, append_dim='time')
     
     # delete downloaded file
     os.system(f'rm {file}')
