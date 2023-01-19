@@ -1,6 +1,6 @@
 # DASStore: the prototype of an object storage system for Distributed Acoustic Sensing data.
 ## Overview
-This work introduce a new storage solution for distributed acounstic sensing data. We introduced object storage that has been widely used in cloud storage (AWS S3, Azure Blob, etc.) to local data server. Instead of hosting data in HDF5 format, we proposed converting DAS data into Zarr format that is optimized for cloud environment. 
+This work introduce a new storage solution for distributed acounstic sensing data. We introduce object storage that has been widely used in cloud storage (AWS S3, Azure Blob, etc.) to a local data server. Instead of hosting data in the HDF5 format, we proposed hosting DAS data in the Zarr format that is optimized for cloud environment. 
 
 ## Installation
 ### Data Server
@@ -24,3 +24,9 @@ This work introduce a new storage solution for distributed acounstic sensing dat
     $ mc config host add minio <ENDPOINT_URL>:<ENDPOINT_PORT> <ADMIN-USER> <ADMIN-PASSWORD> 
     Added `minio` successfully.
 ```
+
+### Reference
+* https://zarr.readthedocs.io/en/stable/
+* https://min.io
+* https://tiledb.com
+* https://aws.amazon.com/s3/
