@@ -4,3 +4,6 @@ tiledb
 minio
 dask
 s3fs
+distributed
+scipy
+psutil
