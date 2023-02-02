@@ -21,7 +21,9 @@ def h52zarr_xarray(h5_dir, fn_zarr, chunk={'time':3000, 'distance':3000}):
         for single h5 and then writes/appends to zarr using xarray
     
     TODO This is pretty slow right now. Theres probably a better way to read h5 into memory.
-
+    TODO automatically create flattened version of h5 dataset instead of hard coding the keys (lines 49 54)
+    TODO Create method to catch when h5 files are not uniform in size
+    
     Parameters
     ----------
     h5_dir : string
@@ -54,7 +56,7 @@ def h52zarr_xarray(h5_dir, fn_zarr, chunk={'time':3000, 'distance':3000}):
             'SampleCount':('time', hf['Acquisition']['Raw[0]']['Custom']['SampleCount'])}
         )
         
-        ds = ds.chunk({'time':3000, 'distance':3000})
+        ds = ds.chunk(chunk)
         
         # create new zarr store if beginning of loop otherwize, append in time dimension
         if first_loop:
