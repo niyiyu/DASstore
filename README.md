@@ -4,7 +4,8 @@ This work introduce a new storage solution for distributed acounstic sensing dat
 
 ## Installation
 ### Data Server
-```
+MinIO can run in the Single-Node Single-Drive mode (SNSD). See documentation [here](https://min.io/docs/minio/linux/operations/install-deploy-manage/deploy-minio-single-node-single-drive.html) for more detail.
+```bash
     # pull MinIO image
     docker pull minio/minio
 
@@ -17,15 +18,13 @@ This work introduce a new storage solution for distributed acounstic sensing dat
         -d minio/minio server /data --console-address ":9001"
 ```
 
-### Client
-```
-    docker pull minio/mc
-    docker run -it --rm --entrypoint=/bin/bash minio/mc
-    $ mc config host add minio <ENDPOINT_URL>:<ENDPOINT_PORT> <ADMIN-USER> <ADMIN-PASSWORD> 
-    Added `minio` successfully.
-```
+Alternatively, users can deploy MinIO in the Single-Node Multiple-Drive mode (SNMD). See documentation [here](https://min.io/docs/minio/linux/operations/install-deploy-manage/deploy-minio-single-node-multi-drive.html) for more detail.
 
-### Reference
+## Schema
+
+## Metadata
+
+## Reference
 * https://zarr.readthedocs.io/en/stable/
 * https://min.io
 * https://tiledb.com
