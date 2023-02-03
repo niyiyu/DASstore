@@ -15,8 +15,9 @@ import h5py
 import xarray as xr
 from tqdm import tqdm
 
-def h52zarr_xarray(h5_dir, fn_zarr, chunk={'time':3000, 'distance':3000}):
-    '''
+
+def h52zarr_xarray(h5_dir, fn_zarr, chunk={"time": 3000, "distance": 3000}):
+    """
     converts multiple h5 files to single zarr store using xarray. Manually loads the data into memory
         for single h5 and then writes/appends to zarr using xarray
     
@@ -34,35 +35,48 @@ def h52zarr_xarray(h5_dir, fn_zarr, chunk={'time':3000, 'distance':3000}):
         location of zarr store
     chunk : dict
         how to chunk zarr store (default {'time':3000, 'distance':3000})
-    '''
+    """
 
     file_list = os.listdir(h5_dir)
     file_list.sort()
 
-    files = [h5_dir+file for file in file_list]
+    files = [h5_dir + file for file in file_list]
 
-    first_loop=True
+    first_loop = True
 
     for file in tqdm(files):
-        
+
         hf = h5py.File(file)
 
-        ds = xr.Dataset({
-            'RawData':((['distance', 'time'], hf['Acquisition']['Raw[0]']['RawData'][:])),
-            'RawDataTime':('time', hf['Acquisition']['Raw[0]']['RawDataTime'][:]),
-            'GpBits':('time', hf['Acquisition']['Raw[0]']['Custom']['GpBits']),
-            'GpsStatus':('time', hf['Acquisition']['Raw[0]']['Custom']['GpsStatus']),
-            'PpsOffset':('time', hf['Acquisition']['Raw[0]']['Custom']['PpsOffset']),
-            'SampleCount':('time', hf['Acquisition']['Raw[0]']['Custom']['SampleCount'])}
+        ds = xr.Dataset(
+            {
+                "RawData": (
+                    (["distance", "time"], hf["Acquisition"]["Raw[0]"]["RawData"][:])
+                ),
+                "RawDataTime": ("time", hf["Acquisition"]["Raw[0]"]["RawDataTime"][:]),
+                "GpBits": ("time", hf["Acquisition"]["Raw[0]"]["Custom"]["GpBits"]),
+                "GpsStatus": (
+                    "time",
+                    hf["Acquisition"]["Raw[0]"]["Custom"]["GpsStatus"],
+                ),
+                "PpsOffset": (
+                    "time",
+                    hf["Acquisition"]["Raw[0]"]["Custom"]["PpsOffset"],
+                ),
+                "SampleCount": (
+                    "time",
+                    hf["Acquisition"]["Raw[0]"]["Custom"]["SampleCount"],
+                ),
+            }
         )
-        
+
         ds = ds.chunk(chunk)
-        
+
         # create new zarr store if beginning of loop otherwize, append in time dimension
         if first_loop:
             first_loop = False
-            ds.to_zarr(fn_zarr, mode='w-')
+            ds.to_zarr(fn_zarr, mode="w-")
         else:
-            ds.to_zarr(fn_zarr, append_dim='time')
+            ds.to_zarr(fn_zarr, append_dim="time")
 
     return
