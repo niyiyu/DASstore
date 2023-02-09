@@ -1,5 +1,7 @@
 import tiledb
 from minio import Minio
+from minio.error import S3Error
+
 from datetime import datetime
 
 from ..utils.credential import get_credential
@@ -13,20 +15,27 @@ class Client:
         region="",
         secure=False,
         use_virtual_addressing=False,
+        anon=False,
         credential_path="~/.dasstore/credentials",
     ):
-        self.credential = get_credential(credential_path)
 
         self.backend = "TileDB"
         self.bucket = bucket
+        self.anon = anon
 
         self.config = tiledb.Config()
         self.config["vfs.s3.region"] = region
         self.config["vfs.s3.endpoint_override"] = endpoint
-        self.config["vfs.s3.aws_access_key_id"] = self.credential["aws_access_key_id"]
-        self.config["vfs.s3.aws_secret_access_key"] = self.credential[
-            "aws_secret_access_key"
-        ]
+
+        if not anon:
+            self.credential = get_credential(credential_path)
+            self.config["vfs.s3.aws_access_key_id"] = self.credential[
+                "aws_access_key_id"
+            ]
+            self.config["vfs.s3.aws_secret_access_key"] = self.credential[
+                "aws_secret_access_key"
+            ]
+
         if use_virtual_addressing:
             self.config["vfs.s3.use_virtual_addressing"] = "true"
         else:
@@ -38,12 +47,20 @@ class Client:
             self.config["vfs.s3.scheme"] = "http"
 
         self.ctx = tiledb.Ctx(self.config)
-        self.minio = Minio(
-            endpoint,
-            self.credential["aws_access_key_id"],
-            self.credential["aws_secret_access_key"],
-            secure=secure,
-        )
+        if not anon:
+            self.minio = Minio(
+                endpoint,
+                self.credential["aws_access_key_id"],
+                self.credential["aws_secret_access_key"],
+                secure=secure,
+            )
+        else:
+            self.minio = Minio(endpoint, secure=secure)
+
+        try:
+            self._bucket_exist = self.minio.bucket_exists(bucket)
+        except S3Error:
+            raise Exception("Please check access policy.")
 
         self.get_metadata()
 
@@ -77,7 +94,7 @@ class Client:
     def __str__(self):
         s = ""
         s += f"Bucket:  \t s3://{self.bucket} \n"
-        s += f"Exist:   \t {self.minio.bucket_exists(self.bucket)} \n"
+        s += f"Exist:   \t {self._bucket_exist} \n"
         s += f"Endpoint:\t {self.config['vfs.s3.scheme']}://{self.config['vfs.s3.endpoint_override']}\n"
         s += f"Backend: \t {self.backend}\n"
 

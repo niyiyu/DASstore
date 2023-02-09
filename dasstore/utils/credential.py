@@ -8,8 +8,8 @@ def get_credential(credential_path="~/.dasstore/credentials"):
 
     try:
         assert os.path.exists(credential_path)
-    except:
-        print(f"Check credential file:\t {credential_path}")
+    except AssertionError:
+        raise FileNotFoundError(f"Check credential file:\t {credential_path}")
 
     # parse the credential file if exist
     with open(credential_path, "r") as f:

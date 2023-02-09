@@ -1,5 +1,6 @@
 import zarr
 from minio import Minio
+from minio.error import S3Error
 from datetime import datetime
 
 from ..utils.credential import get_credential
@@ -12,30 +13,41 @@ class Client:
         endpoint,
         region="",
         secure=False,
+        anon=False,
         credential_path="~/.dasstore/credentials",
     ):
-        self.credential = get_credential(credential_path)
-
         self.backend = "Zarr"
         self.bucket = bucket
+        self.anon = anon
 
         self.config = {}
         self.config["region"] = region
         self.config["endpoint"] = endpoint
-        self.config["key"] = self.credential["aws_access_key_id"]
-        self.config["secret"] = self.credential["aws_secret_access_key"]
+
+        if not anon:
+            self.credential = get_credential(credential_path)
+            self.config["key"] = self.credential["aws_access_key_id"]
+            self.config["secret"] = self.credential["aws_secret_access_key"]
 
         if secure:
             self.config["secure"] = "https"
         else:
             self.config["secure"] = "http"
 
-        self.minio = Minio(
-            endpoint,
-            self.credential["aws_access_key_id"],
-            self.credential["aws_secret_access_key"],
-            secure=secure,
-        )
+        if not anon:
+            self.minio = Minio(
+                endpoint,
+                self.credential["aws_access_key_id"],
+                self.credential["aws_secret_access_key"],
+                secure=secure,
+            )
+        else:
+            self.minio = Minio(endpoint, secure=secure)
+
+        try:
+            self._bucket_exist = self.minio.bucket_exists(bucket)
+        except S3Error:
+            raise Exception("Please check access policy.")
 
         self.get_storage_options()
         self.get_metadata()
@@ -56,7 +68,7 @@ class Client:
             f"s3://{self.bucket}/RawData", "r", storage_options=self.storage_options
         )
 
-        return A[channels, istart:iend]
+        return A.oindex[channels, istart:iend]  # allowing list or numpy.array
 
     def get_metadata(self):
         A = zarr.open_array(
@@ -65,13 +77,21 @@ class Client:
         self.meta = dict(A.attrs)
 
     def get_storage_options(self):
-        self.storage_options = {
-            "key": self.config["key"],
-            "secret": self.config["secret"],
-            "client_kwargs": {
-                "endpoint_url": f"{self.config['secure']}://{self.config['endpoint']}"
-            },
-        }
+        if self.anon:
+            self.storage_options = {
+                "anon": True,
+                "client_kwargs": {
+                    "endpoint_url": f"{self.config['secure']}://{self.config['endpoint']}"
+                },
+            }
+        else:
+            self.storage_options = {
+                "key": self.config["key"],
+                "secret": self.config["secret"],
+                "client_kwargs": {
+                    "endpoint_url": f"{self.config['secure']}://{self.config['endpoint']}"
+                },
+            }
 
     def _list_objects(self):
         for i in self.minio.list_objects(self.bucket):
@@ -79,10 +99,11 @@ class Client:
 
     def __str__(self):
         s = ""
-        s += f"Bucket:  \t s3://{self.bucket} \n"
-        s += f"Exist:   \t {self.minio.bucket_exists(self.bucket)} \n"
-        s += f"Endpoint:\t {self.config['secure']}://{self.config['endpoint']}\n"
-        s += f"Backend: \t {self.backend}\n"
+        s += f"Bucket:    \t s3://{self.bucket} \n"
+        s += f"Anonymous: \t {self.anon} \n"
+        s += f"Exist:     \t {self._bucket_exist} \n"
+        s += f"Endpoint:  \t {self.config['secure']}://{self.config['endpoint']}\n"
+        s += f"Backend:   \t {self.backend}\n"
 
         return s
 
