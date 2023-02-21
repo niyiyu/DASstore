@@ -7,7 +7,7 @@ import numpy as np
 from scipy import signal
 import argparse
 
-from dasstore.zarr import Client
+from dasstore.tiledb import Client
 
 def process(d):
     sos = signal.butter(2, [0.01, 1], 'bp', fs=200, output='sos')  # bandpass filter 0.01 Hz to 1 Hz
@@ -32,7 +32,7 @@ size = comm.Get_size()
 indexes = np.arange(5000)
 channel_index = np.array_split(indexes, size)[rank]
 
-client = Client(f"Zarr-OOI-DAS-{bucket}", "pnwstore1.ess.washington.edu:9000")
+client = Client(f"TileDB-OOI-DAS-{bucket}", "pnwstore1.ess.washington.edu:9000")
 
 d = client.get_raw_data(channel_index, 
                         starttime = "2021-11-02T00:00:14.000", 
