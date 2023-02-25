@@ -28,7 +28,7 @@ class Client:
         self.config["vfs.s3.endpoint_override"] = endpoint
 
         if not anon:
-            self.credential = get_credential(credential_path)
+            self.credential = get_credential(endpoint, credential_path)
             self.config["vfs.s3.aws_access_key_id"] = self.credential[
                 "aws_access_key_id"
             ]

@@ -25,7 +25,7 @@ class Client:
         self.config["endpoint"] = endpoint
 
         if not anon:
-            self.credential = get_credential(credential_path)
+            self.credential = get_credential(endpoint, credential_path)
             self.config["key"] = self.credential["aws_access_key_id"]
             self.config["secret"] = self.credential["aws_secret_access_key"]
 
