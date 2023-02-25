@@ -15,17 +15,21 @@ class Client:
         region="",
         secure=False,
         anon=False,
+        role_assigned = False,
         credential_path="~/.dasstore/credentials",
     ):
         self.backend = "Zarr"
         self.bucket = bucket
         self.anon = anon
+        self.role_assigned = role_assigned
 
         self.config = {}
         self.config["region"] = region
         self.config["endpoint"] = endpoint
 
-        if not anon:
+        if role_assigned:
+            self.credential = None
+        elif not anon:  
             self.credential = get_credential(endpoint, credential_path)
             self.config["key"] = self.credential["aws_access_key_id"]
             self.config["secret"] = self.credential["aws_secret_access_key"]
@@ -81,7 +85,13 @@ class Client:
         self.meta = dict(A.attrs)
 
     def get_storage_options(self):
-        if self.anon:
+        if self.role_assigned:
+            self.storage_options = {
+                "client_kwargs": {
+                    "endpoint_url": f"{self.config['secure']}://{self.config['endpoint']}"
+                },
+            }
+        elif self.anon:
             self.storage_options = {
                 "anon": True,
                 "client_kwargs": {
