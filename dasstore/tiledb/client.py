@@ -1,6 +1,7 @@
 import tiledb
-from minio import Minio
-from minio.error import S3Error
+
+# from minio import Minio
+# from minio.error import S3Error
 
 from datetime import datetime
 
@@ -18,7 +19,6 @@ class Client:
         anon=False,
         credential_path="~/.dasstore/credentials",
     ):
-
         self.backend = "TileDB"
         self.bucket = bucket
         self.anon = anon
@@ -47,20 +47,24 @@ class Client:
             self.config["vfs.s3.scheme"] = "http"
 
         self.ctx = tiledb.Ctx(self.config)
-        if not anon:
-            self.minio = Minio(
-                endpoint,
-                self.credential["aws_access_key_id"],
-                self.credential["aws_secret_access_key"],
-                secure=secure,
-            )
-        else:
-            self.minio = Minio(endpoint, secure=secure)
 
-        try:
-            self._bucket_exist = self.minio.bucket_exists(bucket)
-        except S3Error:
-            raise Exception("Please check access policy.")
+        # ========================
+        # Does this really matter?
+        # if not anon:
+        #     self.minio = Minio(
+        #         endpoint,
+        #         self.credential["aws_access_key_id"],
+        #         self.credential["aws_secret_access_key"],
+        #         secure=secure,
+        #     )
+        # else:
+        #     self.minio = Minio(endpoint, secure=secure)
+
+        # try:
+        #     self._bucket_exist = self.minio.bucket_exists(bucket)
+        # except S3Error:
+        #     raise Exception("Please check access policy.")
+        # ========================
 
         self.get_metadata()
 
@@ -94,7 +98,8 @@ class Client:
     def __str__(self):
         s = ""
         s += f"Bucket:  \t s3://{self.bucket} \n"
-        s += f"Exist:   \t {self._bucket_exist} \n"
+        s += f"Anonymous: \t {self.anon} \n"
+        # s += f"Exist:   \t {self._bucket_exist} \n"
         s += f"Endpoint:\t {self.config['vfs.s3.scheme']}://{self.config['vfs.s3.endpoint_override']}\n"
         s += f"Backend: \t {self.backend}\n"
 

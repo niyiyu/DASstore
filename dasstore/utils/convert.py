@@ -20,11 +20,11 @@ def h52zarr_xarray(h5_dir, fn_zarr, chunk={"time": 3000, "distance": 3000}):
     """
     converts multiple h5 files to single zarr store using xarray. Manually loads the data into memory
         for single h5 and then writes/appends to zarr using xarray
-    
+
     TODO This is pretty slow right now. Theres probably a better way to read h5 into memory.
     TODO automatically create flattened version of h5 dataset instead of hard coding the keys (lines 49 54)
     TODO Create method to catch when h5 files are not uniform in size
-    
+
     Parameters
     ----------
     h5_dir : string
@@ -45,7 +45,6 @@ def h52zarr_xarray(h5_dir, fn_zarr, chunk={"time": 3000, "distance": 3000}):
     first_loop = True
 
     for file in tqdm(files):
-
         hf = h5py.File(file)
 
         ds = xr.Dataset(

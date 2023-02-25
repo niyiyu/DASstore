@@ -1,7 +1,6 @@
 zarr
 xarray
 tiledb
-minio
 dask
 s3fs
 distributed

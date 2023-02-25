@@ -1,6 +1,7 @@
 import zarr
-from minio import Minio
-from minio.error import S3Error
+
+# from minio import Minio
+# from minio.error import S3Error
 from datetime import datetime
 
 from ..utils.credential import get_credential
@@ -34,20 +35,23 @@ class Client:
         else:
             self.config["secure"] = "http"
 
-        if not anon:
-            self.minio = Minio(
-                endpoint,
-                self.credential["aws_access_key_id"],
-                self.credential["aws_secret_access_key"],
-                secure=secure,
-            )
-        else:
-            self.minio = Minio(endpoint, secure=secure)
+        # ========================
+        # Does this really matter?
+        # if not anon:
+        # self.minio = Minio(
+        # endpoint,
+        # self.credential["aws_access_key_id"],
+        # self.credential["aws_secret_access_key"],
+        # secure=secure,
+        # )
+        # else:
+        # self.minio = Minio(endpoint, secure=secure)
 
-        try:
-            self._bucket_exist = self.minio.bucket_exists(bucket)
-        except S3Error:
-            raise Exception("Please check access policy.")
+        # try:
+        # self._bucket_exist = self.minio.bucket_exists(bucket)
+        # except S3Error:
+        # raise Exception("Please check access policy.")
+        # ========================
 
         self.get_storage_options()
         self.get_metadata()
@@ -101,7 +105,7 @@ class Client:
         s = ""
         s += f"Bucket:    \t s3://{self.bucket} \n"
         s += f"Anonymous: \t {self.anon} \n"
-        s += f"Exist:     \t {self._bucket_exist} \n"
+        # s += f"Exist:     \t {self._bucket_exist} \n"
         s += f"Endpoint:  \t {self.config['secure']}://{self.config['endpoint']}\n"
         s += f"Backend:   \t {self.backend}\n"
 
