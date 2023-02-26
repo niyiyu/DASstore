@@ -19,7 +19,7 @@ def get_credential(endpoint, credential_path="~/.dasstore/credentials"):
     # parse credentials by their endpoint url
     creds = {}
     for idl, l in enumerate(lines):
-        if (l == "") or ("aws" in l):
+        if (l == "") or ("=" in l):
             continue
 
         if l[0] == "[" and l[-1] == "]":

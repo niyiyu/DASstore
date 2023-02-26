@@ -15,7 +15,7 @@ class Client:
         region="",
         secure=False,
         anon=False,
-        role_assigned = False,
+        role_assigned=False,
         credential_path="~/.dasstore/credentials",
     ):
         self.backend = "Zarr"
@@ -29,7 +29,7 @@ class Client:
 
         if role_assigned:
             self.credential = None
-        elif not anon:  
+        elif not anon:
             self.credential = get_credential(endpoint, credential_path)
             self.config["key"] = self.credential["aws_access_key_id"]
             self.config["secret"] = self.credential["aws_secret_access_key"]
