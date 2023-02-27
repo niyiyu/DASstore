@@ -74,8 +74,10 @@ class Client:
         self._fs = self.meta["acquisition.acquisition_sample_rate"]
 
     def get_data(self, channels, starttime, endtime, attr="RawData"):
-        stime = datetime.strptime(starttime, "%Y-%m-%dT%H:%M:%S.%f")
-        etime = datetime.strptime(endtime, "%Y-%m-%dT%H:%M:%S.%f")
+        if isinstance(starttime, str):
+            stime = datetime.strptime(starttime, "%Y-%m-%dT%H:%M:%S.%f")
+        if isinstance(endtime, str):
+            etime = datetime.strptime(endtime, "%Y-%m-%dT%H:%M:%S.%f")
 
         istart = int((stime - self._t0).total_seconds() * self._fs)
         iend = (
