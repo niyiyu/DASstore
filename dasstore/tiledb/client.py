@@ -73,15 +73,15 @@ class Client:
         )
         self._fs = self.meta["acquisition.acquisition_sample_rate"]
 
-    def get_data(self, channels, stime, etime, attr="RawData"):
-        if isinstance(stime, str):
-            stime = datetime.strptime(stime, "%Y-%m-%dT%H:%M:%S.%f")
-        if isinstance(etime, str):
-            etime = datetime.strptime(etime, "%Y-%m-%dT%H:%M:%S.%f")
+    def get_data(self, channels, starttime, endtime, attr="RawData"):
+        if isinstance(starttime, str):
+            starttime = datetime.strptime(starttime, "%Y-%m-%dT%H:%M:%S.%f")
+        if isinstance(endtime, str):
+            endtime = datetime.strptime(endtime, "%Y-%m-%dT%H:%M:%S.%f")
 
-        istart = int((stime - self._t0).total_seconds() * self._fs)
+        istart = int((starttime - self._t0).total_seconds() * self._fs)
         iend = (
-            int((etime - self._t0).total_seconds() * self._fs) - 1
+            int((endtime - self._t0).total_seconds() * self._fs) - 1
         )  # multi index does not follow python index convension
 
         with tiledb.open(
