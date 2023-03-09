@@ -22,19 +22,20 @@ class Client:
         self.bucket = bucket
         self.anon = anon
         self.role_assigned = role_assigned
+        self.secure = secure
 
         self.config = {}
         self.config["region"] = region
         self.config["endpoint"] = endpoint
 
-        if role_assigned:
+        if self.role_assigned:
             self.credential = None
         elif not anon:
             self.credential = get_credential(endpoint, credential_path)
             self.config["key"] = self.credential["aws_access_key_id"]
             self.config["secret"] = self.credential["aws_secret_access_key"]
 
-        if secure:
+        if self.secure:
             self.config["secure"] = "https"
         else:
             self.config["secure"] = "http"

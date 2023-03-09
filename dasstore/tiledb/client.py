@@ -17,17 +17,23 @@ class Client:
         secure=False,
         use_virtual_addressing=False,
         anon=False,
+        role_assigned=False,
         credential_path="~/.dasstore/credentials",
     ):
         self.backend = "TileDB"
         self.bucket = bucket
         self.anon = anon
+        self.role_assigned = role_assigned
+        self.secure = secure
+        self.use_virtual_addressing = use_virtual_addressing
 
         self.config = tiledb.Config()
         self.config["vfs.s3.region"] = region
         self.config["vfs.s3.endpoint_override"] = endpoint
 
-        if not anon:
+        if self.role_assigned:
+            pass
+        elif not anon:
             self.credential = get_credential(endpoint, credential_path)
             self.config["vfs.s3.aws_access_key_id"] = self.credential[
                 "aws_access_key_id"
@@ -36,12 +42,12 @@ class Client:
                 "aws_secret_access_key"
             ]
 
-        if use_virtual_addressing:
+        if self.use_virtual_addressing:
             self.config["vfs.s3.use_virtual_addressing"] = "true"
         else:
             self.config["vfs.s3.use_virtual_addressing"] = "false"
 
-        if secure:
+        if self.secure:
             self.config["vfs.s3.scheme"] = "https"
         else:
             self.config["vfs.s3.scheme"] = "http"
