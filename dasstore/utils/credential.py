@@ -3,8 +3,7 @@ import os
 
 def get_credential(endpoint, credential_path="~/.dasstore/credentials"):
     if "~" in credential_path:
-        home = os.environ["HOME"]
-        credential_path = credential_path.replace("~", home)
+        credential_path = credential_path.replace("~", os.path.expanduser("~"))
 
     try:
         assert os.path.exists(credential_path)
