@@ -27,7 +27,7 @@ def add_credential(endpoint, credential_path="~/.dasstore/credentials"):
         key = input("Input access key ID:        \t")
         secret = input("Input secret access key: \t")
 
-        with open(credential_path, "a") as f:
+        with open(credential_path, "w") as f:
             f.write(f"[{endpoint}]\n")
             f.write(f"aws_access_key_id = {key}\n")
             f.write(f"aws_secret_access_key = {secret}\n")
