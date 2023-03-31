@@ -82,14 +82,18 @@ class Client:
                 endtime = datetime.strptime(endtime, "%Y-%m-%dT%H:%M:%S")
 
         try:
-            assert(starttime >= self._t0)
+            assert starttime >= self._t0
         except AssertionError:
-            raise ValueError(f"starttime [{starttime}] earlier than acquisition start time [{self._t0}]")
+            raise ValueError(
+                f"starttime [{starttime}] earlier than acquisition start time [{self._t0}]"
+            )
 
         try:
-            assert(endtime <= self._t1)
+            assert endtime <= self._t1
         except AssertionError:
-            raise ValueError(f"endtime [{endtime}] later than acquisition end time [{self._t1}]")
+            raise ValueError(
+                f"endtime [{endtime}] later than acquisition end time [{self._t1}]"
+            )
 
         istart = int((starttime - self._t0).total_seconds() * self._fs)
         iend = int((endtime - self._t0).total_seconds() * self._fs)

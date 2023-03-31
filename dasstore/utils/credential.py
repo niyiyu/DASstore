@@ -18,7 +18,7 @@ def get_credential(endpoint, credential_path="~/.dasstore/credentials"):
         raise KeyError(f"No credential found for endpoint [{endpoint}]")
 
 
-def add_credential(endpoint, credential_path="~/.dasstore/credentials"): 
+def add_credential(endpoint, credential_path="~/.dasstore/credentials"):
     if "~" in credential_path:
         credential_path = credential_path.replace("~", os.path.expanduser("~"))
 
@@ -37,6 +37,7 @@ def add_credential(endpoint, credential_path="~/.dasstore/credentials"):
         print(f"Credential added.")
     else:
         print(f"Credential for [{endpoint}] already exist.")
+
 
 def parse_credential(credential_path):
     # parse the credential file if exist
