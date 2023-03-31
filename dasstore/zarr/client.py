@@ -64,14 +64,33 @@ class Client:
         self._t0 = datetime.strptime(
             self.meta["acquisition.acquisition_start_time"], "%Y-%m-%dT%H:%M:%S.%f"
         )
+        self._t1 = datetime.strptime(
+            self.meta["acquisition.acquisition_end_time"], "%Y-%m-%dT%H:%M:%S.%f"
+        )
         self._fs = self.meta["acquisition.acquisition_sample_rate"]
 
     def get_data(self, channels, starttime, endtime, attr="RawData"):
         if isinstance(starttime, str):
-            starttime = datetime.strptime(starttime, "%Y-%m-%dT%H:%M:%S.%f")
+            if "." in starttime:
+                starttime = datetime.strptime(starttime, "%Y-%m-%dT%H:%M:%S.%f")
+            else:
+                starttime = datetime.strptime(starttime, "%Y-%m-%dT%H:%M:%S")
         if isinstance(endtime, str):
-            endtime = datetime.strptime(endtime, "%Y-%m-%dT%H:%M:%S.%f")
-            
+            if "." in endtime:
+                endtime = datetime.strptime(endtime, "%Y-%m-%dT%H:%M:%S.%f")
+            else:
+                endtime = datetime.strptime(endtime, "%Y-%m-%dT%H:%M:%S")
+
+        try:
+            assert(starttime >= self._t0)
+        except AssertionError:
+            raise ValueError(f"starttime [{starttime}] earlier than acquisition start time [{self._t0}]")
+
+        try:
+            assert(endtime <= self._t1)
+        except AssertionError:
+            raise ValueError(f"endtime [{endtime}] later than acquisition end time [{self._t1}]")
+
         istart = int((starttime - self._t0).total_seconds() * self._fs)
         iend = int((endtime - self._t0).total_seconds() * self._fs)
 
