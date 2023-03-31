@@ -23,6 +23,8 @@ def add_credential(endpoint, credential_path="~/.dasstore/credentials"):
         credential_path = credential_path.replace("~", os.path.expanduser("~"))
 
     if not os.path.exists(credential_path):
+        os.makedirs(os.path.expanduser("~/.dasstore"), exist_ok = True)
+
         print(f"Enter credential for [{endpoint}]:")
         key = input("Input access key ID:        \t")
         secret = input("Input secret access key: \t")
@@ -32,7 +34,7 @@ def add_credential(endpoint, credential_path="~/.dasstore/credentials"):
             f.write(f"aws_access_key_id = {key}\n")
             f.write(f"aws_secret_access_key = {secret}\n")
 
-        print(f"Credential added.")
+        print(f"Credential added to [{credential_path}]")
     else:
         creds = parse_credential(credential_path)
 
@@ -46,9 +48,9 @@ def add_credential(endpoint, credential_path="~/.dasstore/credentials"):
                 f.write(f"aws_access_key_id = {key}\n")
                 f.write(f"aws_secret_access_key = {secret}\n")
 
-            print(f"Credential added.")
+            print(f"Credential added to [{credential_path}]")
         else:
-            print(f"Credential for [{endpoint}] already exist.")
+            print(f"Credential for [{endpoint}] already exist at [{credential_path}]")
 
 
 def parse_credential(credential_path):
