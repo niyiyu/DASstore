@@ -1,4 +1,4 @@
-# DASstore: the prototype of an object storage system for Distributed Acoustic Sensing data
+# DASstore: an object storage system for Distributed Acoustic Sensing data
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 ## Overview
 This work introduce a new storage solution for distributed acoustic sensing (DAS) data. We introduce object storage that has been widely used in commercial cloud storage (AWS S3, Azure Blob, etc.) to a local data server. Instead of hosting data in the HDF5 format, we proposed hosting DAS data in the Zarr format that is optimized for cloud environment. 
@@ -21,15 +21,11 @@ MinIO can run in the Single-Node Single-Drive mode (SNSD). See documentation [he
 Alternatively, users can deploy MinIO in the Single-Node Multiple-Drive mode (SNMD). Documentation of more advanced deployments can be found [here](https://min.io/docs/minio/linux/operations/install-deploy-manage/deploy-minio-single-node-multi-drive.html).
 
 ## Data Client
-We provide a Python client to conveniently query the data with Zarr backend. The client supports either anonymous access for public bucket, or private bucket (access key and secret required).
+We provide a Python client to conveniently query the data with a Zarr backend. The client supports either anonymous access for public bucket, or private bucket (access key and secret required).
 ```python
 from dasstore.zarr import Client
 
-client = Client(BUCKET, ENDPOINT_URL, anon = True)
-# Bucket:    	 BUCKET
-# Anonymous: 	 True
-# Endpoint:  	 ENDPOINT_URL
-# Backend:   	 Zarr
+client = Client(BUCKET, ENDPOINT_URL)
 
 client.get_data(np.arange(10, 100), 
                 starttime = "2021-11-02T00:00:14.000", 
