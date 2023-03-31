@@ -2,8 +2,13 @@ from mpi4py import MPI
 
 import h5py
 import zarr
+import numpy as np
+import time
+import os
 import glob
-
+import pandas as pd
+from datetime import datetime, timedelta
+from tqdm import tqdm
 # parallelize with ompi
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
@@ -12,44 +17,39 @@ size = comm.Get_size()
 flist = glob.glob("/data/data2/south-data-ejm/hdd/South-C1-LR-95km-P1kHz-GL50m-SP2m-FS200Hz_2021-11-01T16_09_15-0700/*2021-11-02*")
 flist = sorted(flist)
 
-for idf, f in enumerate(flist):
-    if idf % size == rank:
-        print(f"working on {f}")
-        zname = f.split("_")[-1][:-3]
-        f = h5py.File(f,'r')
-        z = zarr.open(f"s3://OOI-DAS/{zname}.zarr",
-                       storage_options = {
-                           # for public data (anonymous access):
-                            "anon": True,
-                            "client_kwargs": {
-                               # note there is no s in http
-                               "endpoint_url": "http://pnwstore1.ess.washington.edu:9000"
-                           }
-                       }, mode = 'w')
+rootpath = '/data/data3/seadasn_2022-10-07_2023-01-13/'
+flist = sorted(glob.glob(rootpath + "/seadasn_2022-12-*"))
 
-        zacq = z.create_group("Acquisition")
-        zcustom1 = zacq.create_group("Custom")
+# PNWstore1
+z = zarr.open_array(f"s3://seadas-december-2022/RawData", 
+               storage_options = {
+                    "anon": True,
+                    "client_kwargs": {
+                       "endpoint_url": "http://128.208.23.57:9000"
+                   }
+               }, mode = 'a')
 
-        # Raw[0] seem not working for fsspec
-        # use Raw%5B0%5B? Raw0
-        zraw = zacq.create_group("Raw0")
-        zrawdata = zraw.create_dataset("RawData", shape=(47500, 12000), chunks=(50, 12000), dtype='i4')
-        zrawdata[:, :] = f['/Acquisition/Raw[0]/RawData'][:, :]
+t0 = datetime.fromisoformat(z.attrs['acquisition.acquisition_start_time']).timestamp()
 
-        zrawdatatime = zraw.create_dataset("RawDataTime", shape=(12000,),  dtype='i8')
-        zrawdatatime[:] = f['/Acquisition/Raw[0]/RawDataTime'][:]
+for idx, i in tqdm(enumerate(flist), total = len(flist)):
+    if idx >= 2932:
+        if idx % size == rank:
+            try:
+                f = h5py.File(i, 'r')
+                
+                tsp_start = int(f['/Acquisition/Raw[0]/RawDataTime'][0]/10000)/1e2 + 28800
+                tsp_end = int(f['/Acquisition/Raw[0]/RawDataTime'][-1]/10000)/1e2 + 28800
 
-        zcustom2 = zraw.create_group("Custom")
-        zgpbit = zcustom2.create_dataset("GpBits", shape=(12000,),  dtype='u1')
-        zgpbit[:] = f['/Acquisition/Raw[0]/Custom/GpBits'][:]
+                ind_start = int((tsp_start - t0)/0.01)
+                ind_end = int((tsp_end - t0)/0.01)
 
-        zgps = zcustom2.create_dataset("GpsStatus", shape=(12000,), dtype='u1')
-        zgps[:] = f['/Acquisition/Raw[0]/Custom/GpsStatus'][:]
-
-        zpps = zcustom2.create_dataset("PpsOffset", shape=(12000,), dtype='u4')
-        zpps[:] = f['/Acquisition/Raw[0]/Custom/PpsOffset'][:]
-
-        zspc = zcustom2.create_dataset("SampleCount", shape=(12000,), dtype='i8')
-        zspc[:] = f['/Acquisition/Raw[0]/Custom/SampleCount'][:]
-
-        f.close()
+                assert (ind_start % 6000, ind_end % 6000) == (0, 5999)
+                assert f['/Acquisition/Raw[0]/RawData'].shape == (6000, 2089)
+                
+                z[:, ind_start : ind_end + 1] = f['/Acquisition/Raw[0]/RawData'][:, :].T
+                
+            except:
+                print(i)
+                
+            finally:
+                f.close()

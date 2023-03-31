@@ -27,4 +27,19 @@ def get_credential(endpoint, credential_path="~/.dasstore/credentials"):
     if endpoint in creds:
         return creds[endpoint]
     else:
-        raise KeyError(f"No credential found for endpoint {endpoint}")
+        raise KeyError(f"No credential found for endpoint [{endpoint}]")
+
+
+def add_credential(endpoint, credential_path="~/.dasstore/credentials"):
+    if "~" in credential_path:
+        credential_path = credential_path.replace("~", os.path.expanduser("~"))
+
+    key = input("Input access key ID:     ")
+    secret = input("Input secret access key:     ")
+
+    with open(credential_path, "a") as f:
+        f.write(f"[{endpoint}]\n")
+        f.write(f"aws_access_key_id = {key}\n")
+        f.write(f"aws_secret_access_key = {secret}\n")
+
+    print(f"Credential added.")
