@@ -10,7 +10,7 @@ def get_credential(endpoint, credential_path="~/.dasstore/credentials"):
     except AssertionError:
         raise FileNotFoundError(f"Check credential file:\t {credential_path}")
 
-    creds = parse_credential(credential_path)
+    creds = _parse_credential(credential_path)
 
     if endpoint in creds:
         return creds[endpoint]
@@ -23,7 +23,7 @@ def add_credential(endpoint, credential_path="~/.dasstore/credentials"):
         credential_path = credential_path.replace("~", os.path.expanduser("~"))
 
     if not os.path.exists(credential_path):
-        os.makedirs(os.path.expanduser("~/.dasstore"), exist_ok = True)
+        os.makedirs(os.path.expanduser("~/.dasstore"), exist_ok=True)
 
         print(f"Enter credential for [{endpoint}]:")
         key = input("Input access key ID:        \t")
@@ -36,7 +36,7 @@ def add_credential(endpoint, credential_path="~/.dasstore/credentials"):
 
         print(f"Credential added to [{credential_path}]")
     else:
-        creds = parse_credential(credential_path)
+        creds = _parse_credential(credential_path)
 
         if endpoint not in creds:
             print(f"Enter credential for [{endpoint}]:")
@@ -53,7 +53,45 @@ def add_credential(endpoint, credential_path="~/.dasstore/credentials"):
             print(f"Credential for [{endpoint}] already exist at [{credential_path}]")
 
 
-def parse_credential(credential_path):
+def replace_credential(endpoint, credential_path="~/.dasstore/credentials"):
+    if "~" in credential_path:
+        credential_path = credential_path.replace("~", os.path.expanduser("~"))
+
+    if os.path.exists(credential_path):
+        creds = _parse_credential(credential_path)
+        if endpoint in creds:
+            print(f"Replacing credential for [{endpoint}]:")
+            key = input("Input access key ID:        \t")
+            secret = input("Input secret access key: \t")
+
+            creds[endpoint]["aws_access_key_id"] = key
+            creds[endpoint]["aws_secret_access_key"] = secret
+            _save_credential(creds, credential_path)
+        else:
+            raise ValueError(f"Credential for [{endpoint}] does not exist.")
+    else:
+        raise FileNotFoundError("Credential does not exist.")
+
+
+def _save_credential(creds, credential_path="~/.dasstore/credentials"):
+    if "~" in credential_path:
+        credential_path = credential_path.replace("~", os.path.expanduser("~"))
+
+    if not os.path.exists(credential_path):
+        os.makedirs(os.path.expanduser("~/.dasstore"), exist_ok=True)
+
+    with open(credential_path, "w") as f:
+        for endpoint in creds:
+            f.write(f"[{endpoint}]\n")
+            f.write(f"aws_access_key_id = {creds[endpoint]['aws_access_key_id']}\n")
+            f.write(
+                f"aws_secret_access_key = {creds[endpoint]['aws_secret_access_key']}\n\n"
+            )
+
+    _chmod_credential(credential_path)
+
+
+def _parse_credential(credential_path):
     # parse the credential file if exist
     with open(credential_path, "r") as f:
         lines = f.readlines()
@@ -69,3 +107,10 @@ def parse_credential(credential_path):
             creds[l[1:-1]] = dict([i.split(" = ") for i in lines[idl + 1 : idl + 3]])
 
     return creds
+
+
+def _chmod_credential(credential_path):
+    if "~" in credential_path:
+        credential_path = credential_path.replace("~", os.path.expanduser("~"))
+
+    os.chmod(credential_path, 0o600)
