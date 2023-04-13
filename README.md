@@ -1,5 +1,6 @@
 # DASstore: an object storage for Distributed Acoustic Sensing
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![DOI](https://zenodo.org/badge/566535376.svg)](https://zenodo.org/badge/latestdoi/566535376)
 ## Overview
 This work introduce a new storage solution for distributed acoustic sensing (DAS) data. We introduce object storage that has been widely used in commercial cloud storage (AWS S3, Azure Blob, etc.) to a local data server. Instead of hosting data in the HDF5 format, we proposed hosting DAS data in the Zarr format that is optimized for cloud environment. 
 
