@@ -4,7 +4,7 @@
 This work introduce a new storage solution for distributed acoustic sensing (DAS) data. We introduce object storage that has been widely used in commercial cloud storage (AWS S3, Azure Blob, etc.) to a local data server. Instead of hosting data in the HDF5 format, we proposed hosting DAS data in the Zarr format that is optimized for cloud environment. 
 
 ## Data Server (MinIO) Deployment
-MinIO can run in the Single-Node Single-Drive mode (SNSD). See documentation [here](https://min.io/docs/minio/linux/operations/install-deploy-manage/deploy-minio-single-node-single-drive.html) for more detail.
+MinIO can run as Single-Node Single-Drive (SNSD). See documentation [here](https://min.io/docs/minio/linux/operations/install-deploy-manage/deploy-minio-single-node-single-drive.html) for more detail. Simple deployment using Docker is shown below.
 ```bash
     # pull MinIO image
     docker pull minio/minio
@@ -25,16 +25,16 @@ We provide a Python client to conveniently query the data with a Zarr backend. T
 ```python
 from dasstore.zarr import Client
 
-client = Client(BUCKET, ENDPOINT_URL)
+client = Client(BUCKET, ENDPOINT_URL, anon = False)
 
-client.get_data(np.arange(10, 100), 
+client.get_data(np.arange(100, 100), 
                 starttime = "2021-11-02T00:00:14.000", 
                 endtime   = "2021-11-03T00:20:14.005")
 ```
 ## Schema
 
 ## Metadata
-The metadata includes user-defined data for the DAS experiment. Here, we follow the [metadata convention](https://github.com/DAS-RCN/DAS_metadata) propiosed by the DAS Research Coordination Network (DAS-RCN). There are five levels of metadata describing an experiment under this convention: Overview, Cable and Fiber, Interrogator, Acquisition, and Channel. These metadata, as key-value-pair attributes, are saved together with the raw data.
+The metadata includes user-defined data for the DAS experiment. Here, we follow the [metadata convention](https://github.com/DAS-RCN/DAS_metadata) proposed by the DAS Research Coordination Network (DAS-RCN). There are five levels of metadata describing an experiment under this convention: Overview, Cable and Fiber, Interrogator, Acquisition, and Channel. These metadata, as key-value-pair attributes, are saved together with the raw data.
 
 ```python
 client.meta
