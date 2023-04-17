@@ -1,9 +1,6 @@
-import tiledb
-
-# from minio import Minio
-# from minio.error import S3Error
-
 from datetime import datetime
+
+import tiledb
 
 from ..utils.credential import get_credential
 

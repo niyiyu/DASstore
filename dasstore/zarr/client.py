@@ -1,8 +1,6 @@
-import zarr
-
-# from minio import Minio
-# from minio.error import S3Error
 from datetime import datetime
+
+import zarr
 
 from ..utils.credential import get_credential
 
