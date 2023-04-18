@@ -109,27 +109,15 @@ class Client:
         return dict(A.attrs)
 
     def get_storage_options(self):
-        if self.role_assigned:
-            self.storage_options = {
-                "client_kwargs": {
+        self.storage_options = {"client_kwargs": {
                     "endpoint_url": f"{self.config['secure']}://{self.config['endpoint']}"
-                },
-            }
-        elif self.anon:
-            self.storage_options = {
-                "anon": True,
-                "client_kwargs": {
-                    "endpoint_url": f"{self.config['secure']}://{self.config['endpoint']}"
-                },
-            }
-        else:
-            self.storage_options = {
-                "key": self.config["key"],
-                "secret": self.config["secret"],
-                "client_kwargs": {
-                    "endpoint_url": f"{self.config['secure']}://{self.config['endpoint']}"
-                },
-            }
+                }}
+        if not self.role_assigned:
+            if self.anon:
+                self.storage_options["anon"] = True
+            else:
+                self.storage_options["key"] = self.config["key"]
+                self.storage_options["secret"] = self.config["secret"]
 
     def _list_objects(self):
         for i in self.minio.list_objects(self.bucket):
@@ -137,10 +125,10 @@ class Client:
 
     def __str__(self):
         s = ""
+        s += f"Endpoint:  \t {self.config['secure']}://{self.config['endpoint']}\n"
         s += f"Bucket:    \t s3://{self.bucket} \n"
         s += f"Anonymous: \t {self.anon} \n"
         # s += f"Exist:     \t {self._bucket_exist} \n"
-        s += f"Endpoint:  \t {self.config['secure']}://{self.config['endpoint']}\n"
         s += f"Backend:   \t {self.backend}\n"
 
         return s
