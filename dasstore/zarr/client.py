@@ -25,7 +25,7 @@ class Client:
 
         self.config = {}
         self.config["region"] = region
-        self.config["endpoint"] = endpoint
+        self.config["endpoint"] = endpoint.rstrip("/")
 
         if self.role_assigned:
             self.credential = None

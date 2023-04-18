@@ -26,7 +26,7 @@ class Client:
 
         self.config = tiledb.Config()
         self.config["vfs.s3.region"] = region
-        self.config["vfs.s3.endpoint_override"] = endpoint
+        self.config["vfs.s3.endpoint_override"] = endpoint.rstrip("/")
 
         if self.role_assigned:
             pass
