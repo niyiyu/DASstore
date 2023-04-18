@@ -1,6 +1,5 @@
 from datetime import datetime
 
-import pandas as pd
 import zarr
 
 from ..utils.credential import get_credential
@@ -87,6 +86,14 @@ class Client:
         return A.oindex[channels, istart:iend]  # allowing list or numpy.array
 
     def get_channel(self):
+        try:
+            import pandas as pd
+        except ModuleNotFoundError:
+            raise ModuleNotFoundError("Install pandas to read cable file.")
+
+        return pd.read_csv(
+            f"s3://{self.bucket}/cable.csv", storage_options=self._storage_options
+        )
         return pd.read_csv(
             f"s3://{self.bucket}/cable.csv", storage_options=self._storage_options
         )
