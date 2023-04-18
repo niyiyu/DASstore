@@ -18,7 +18,8 @@ class Client:
         credential_path="~/.dasstore/credentials",
     ):
         self.backend = "TileDB"
-        self.bucket = bucket
+        if "s3://" in bucket:
+            self.bucket = bucket.replace("s3://", "")
         self.anon = anon
         self.role_assigned = role_assigned
         self.secure = secure
