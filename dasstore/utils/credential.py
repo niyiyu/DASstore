@@ -2,6 +2,7 @@ import os
 
 
 def get_credential(endpoint, credential_path="~/.dasstore/credentials"):
+    endpoint = endpoint.rstrip("/")
     if "~" in credential_path:
         credential_path = credential_path.replace("~", os.path.expanduser("~"))
 
@@ -19,6 +20,7 @@ def get_credential(endpoint, credential_path="~/.dasstore/credentials"):
 
 
 def add_credential(endpoint, credential_path="~/.dasstore/credentials"):
+    endpoint = endpoint.rstrip("/")
     if "~" in credential_path:
         credential_path = credential_path.replace("~", os.path.expanduser("~"))
 
@@ -54,6 +56,7 @@ def add_credential(endpoint, credential_path="~/.dasstore/credentials"):
 
 
 def replace_credential(endpoint, credential_path="~/.dasstore/credentials"):
+    endpoint = endpoint.rstrip("/")
     if "~" in credential_path:
         credential_path = credential_path.replace("~", os.path.expanduser("~"))
 
