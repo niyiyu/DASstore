@@ -69,7 +69,7 @@ class Client:
         #     raise Exception("Please check access policy.")
         # ========================
 
-        self.get_metadata()
+        self.meta = self.get_metadata()
 
         self._t0 = datetime.strptime(
             self.meta["acquisition.acquisition_start_time"], "%Y-%m-%dT%H:%M:%S.%f"
@@ -117,7 +117,7 @@ class Client:
 
     def get_metadata(self):
         with tiledb.open(f"s3://{self.bucket}/RawData", "r", ctx=self.ctx) as A:
-            self.meta = dict(A.meta)
+            return dict(A.meta)
 
     def _list_objects(self):
         for i in self.minio.list_objects(self.bucket):

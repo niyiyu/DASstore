@@ -57,7 +57,7 @@ class Client:
         # ========================
 
         self.get_storage_options()
-        self.get_metadata()
+        self.meta = self.get_metadata()
 
         self._t0 = datetime.strptime(
             self.meta["acquisition.acquisition_start_time"], "%Y-%m-%dT%H:%M:%S.%f"
@@ -106,7 +106,7 @@ class Client:
         A = zarr.open_array(
             f"s3://{self.bucket}/RawData", "r", storage_options=self.storage_options
         )
-        self.meta = dict(A.attrs)
+        return dict(A.attrs)
 
     def get_storage_options(self):
         if self.role_assigned:
