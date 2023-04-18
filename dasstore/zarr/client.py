@@ -109,9 +109,11 @@ class Client:
         return dict(A.attrs)
 
     def get_storage_options(self):
-        self.storage_options = {"client_kwargs": {
-                    "endpoint_url": f"{self.config['secure']}://{self.config['endpoint']}"
-                }}
+        self.storage_options = {
+            "client_kwargs": {
+                "endpoint_url": f"{self.config['secure']}://{self.config['endpoint']}"
+            }
+        }
         if not self.role_assigned:
             if self.anon:
                 self.storage_options["anon"] = True

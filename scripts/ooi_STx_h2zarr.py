@@ -7,9 +7,8 @@ import h5py
 import numpy as np
 import pandas as pd
 import xarray as xr
-from tqdm import tqdm
-
 from DASStore.modules import convert
+from tqdm import tqdm
 
 # Download all files from RCA Server
 os.system("bash batch_download.sh")
