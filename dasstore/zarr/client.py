@@ -57,7 +57,7 @@ class Client:
         # raise Exception("Please check access policy.")
         # ========================
 
-        self._storage_options = self._get_storage_options()
+        self._get_storage_options()
         self.meta = self.get_metadata()
 
         self._t0 = datetime.strptime(
