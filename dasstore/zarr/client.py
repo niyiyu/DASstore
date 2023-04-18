@@ -40,24 +40,6 @@ class Client:
         else:
             self.config["secure"] = "http"
 
-        # ========================
-        # Does this really matter?
-        # if not anon:
-        # self.minio = Minio(
-        # endpoint,
-        # self.credential["aws_access_key_id"],
-        # self.credential["aws_secret_access_key"],
-        # secure=secure,
-        # )
-        # else:
-        # self.minio = Minio(endpoint, secure=secure)
-
-        # try:
-        # self._bucket_exist = self.minio.bucket_exists(bucket)
-        # except S3Error:
-        # raise Exception("Please check access policy.")
-        # ========================
-
         self._get_storage_options()
         self.meta = self.get_metadata()
 
@@ -135,7 +117,7 @@ class Client:
     def __str__(self):
         s = ""
         s += f"Endpoint:  \t {self.config['secure']}://{self.config['endpoint']}\n"
-        s += f"Bucket:    \t s3://{self.bucket} \n"
+        s += f"Path:    \t s3://{self.bucket} \n"
         s += f"Anonymous: \t {self.anon} \n"
         s += f"Backend:   \t {self.backend}\n"
 
