@@ -57,7 +57,7 @@ class Client:
         # raise Exception("Please check access policy.")
         # ========================
 
-        self.get_storage_options()
+        self._storage_options = self._get_storage_options()
         self.meta = self.get_metadata()
 
         self._t0 = datetime.strptime(
@@ -98,34 +98,34 @@ class Client:
         iend = int((endtime - self._t0).total_seconds() * self._fs)
 
         A = zarr.open(
-            f"s3://{self.bucket}/RawData", "r", storage_options=self.storage_options
+            f"s3://{self.bucket}/RawData", "r", storage_options=self._storage_options
         )
 
         return A.oindex[channels, istart:iend]  # allowing list or numpy.array
 
     def get_channel(self):
         return pd.read_csv(
-            f"s3://{self.bucket}/cable.csv", storage_options=self.storage_options
+            f"s3://{self.bucket}/cable.csv", storage_options=self._storage_options
         )
 
     def get_metadata(self):
         A = zarr.open_array(
-            f"s3://{self.bucket}/RawData", "r", storage_options=self.storage_options
+            f"s3://{self.bucket}/RawData", "r", storage_options=self._storage_options
         )
         return dict(A.attrs)
 
-    def get_storage_options(self):
-        self.storage_options = {
+    def _get_storage_options(self):
+        self._storage_options = {
             "client_kwargs": {
                 "endpoint_url": f"{self.config['secure']}://{self.config['endpoint']}"
             }
         }
         if not self.role_assigned:
             if self.anon:
-                self.storage_options["anon"] = True
+                self._storage_options["anon"] = True
             else:
-                self.storage_options["key"] = self.config["key"]
-                self.storage_options["secret"] = self.config["secret"]
+                self._storage_options["key"] = self.config["key"]
+                self._storage_options["secret"] = self.config["secret"]
 
     def _list_objects(self):
         for i in self.minio.list_objects(self.bucket):
