@@ -1,5 +1,6 @@
 from datetime import datetime
 
+import pandas as pd
 import zarr
 
 from ..utils.credential import get_credential
@@ -102,6 +103,11 @@ class Client:
 
         return A.oindex[channels, istart:iend]  # allowing list or numpy.array
 
+    def get_channel(self):
+        return pd.read_csv(
+            f"s3://{self.bucket}/cable.csv", storage_options=self.storage_options
+        )
+
     def get_metadata(self):
         A = zarr.open_array(
             f"s3://{self.bucket}/RawData", "r", storage_options=self.storage_options
@@ -130,7 +136,6 @@ class Client:
         s += f"Endpoint:  \t {self.config['secure']}://{self.config['endpoint']}\n"
         s += f"Bucket:    \t s3://{self.bucket} \n"
         s += f"Anonymous: \t {self.anon} \n"
-        # s += f"Exist:     \t {self._bucket_exist} \n"
         s += f"Backend:   \t {self.backend}\n"
 
         return s

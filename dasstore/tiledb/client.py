@@ -128,7 +128,6 @@ class Client:
         s += f"Endpoint:\t {self.config['vfs.s3.scheme']}://{self.config['vfs.s3.endpoint_override']}\n"
         s += f"Bucket:  \t s3://{self.bucket} \n"
         s += f"Anonymous: \t {self.anon} \n"
-        # s += f"Exist:   \t {self._bucket_exist} \n"
         s += f"Backend: \t {self.backend}\n"
 
         return s
