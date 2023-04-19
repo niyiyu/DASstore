@@ -19,6 +19,8 @@ class Client:
         self.backend = "Zarr"
         if "s3://" in bucket:
             self.bucket = bucket.replace("s3://", "")
+        else:
+            self.bucket = bucket
         self.anon = anon
         self.role_assigned = role_assigned
         self.secure = secure
