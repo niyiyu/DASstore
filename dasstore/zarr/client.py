@@ -96,9 +96,6 @@ class Client:
         return pd.read_csv(
             f"s3://{self.bucket}/cable.csv", storage_options=self._storage_options
         )
-        return pd.read_csv(
-            f"s3://{self.bucket}/cable.csv", storage_options=self._storage_options
-        )
 
     def get_metadata(self):
         A = zarr.open_array(

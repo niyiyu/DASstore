@@ -40,7 +40,7 @@ channel_index = np.array_split(indexes, size)[rank]
 
 client = Client(f"Zarr-OOI-DAS-{bucket}", "pnwstore1.ess.washington.edu:9000")
 
-d = client.get_raw_data(
+d = client.get_data(
     channel_index,
     starttime="2021-11-02T00:00:14.000",
     endtime="2021-11-02T00:10:14.000",
