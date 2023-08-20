@@ -50,7 +50,8 @@ client.get_channel()
 Public data service from UW-PSF will be available soon.
 
 ### Tutorial
-Several tutorials about uploading data to the object storage using Zarr or TileDB backend is available at `/tutorials`. We will provide a Google Colab to play with a mini dataset from our storage server. 
+* Several tutorials about uploading data to the object storage using Zarr or TileDB backend is available at `/tutorials`. 
+* A notebook to query 2-hour of 2023 Turkey earthquake SeadAS data is available [here](https://colab.research.google.com/drive/19tY6DFhOC3_eWjV7e5j-WygGw63bjodP?usp=sharing) on Google colab. 
 
 ### Schema
 Updating soom.
