@@ -19,7 +19,7 @@ def get_credential(endpoint, credential_path="~/.dasstore/credentials"):
         raise KeyError(f"No credential found for endpoint [{endpoint}]")
 
 
-def add_credential(endpoint, credential_path="~/.dasstore/credentials"):
+def add_credential(endpoint, credential_path="~/.dasstore/credentials", key = None, secret = None):
     endpoint = endpoint.rstrip("/")
     if "~" in credential_path:
         credential_path = credential_path.replace("~", os.path.expanduser("~"))
@@ -27,9 +27,10 @@ def add_credential(endpoint, credential_path="~/.dasstore/credentials"):
     if not os.path.exists(credential_path):
         os.makedirs(os.path.expanduser("~/.dasstore"), exist_ok=True)
 
-        print(f"Enter credential for [{endpoint}]:")
-        key = input("Input access key ID:        \t")
-        secret = input("Input secret access key: \t")
+        if key is None and secret is None:
+            print(f"Enter credential for [{endpoint}]:")
+            key = input("Input access key ID:        \t")
+            secret = input("Input secret access key: \t")
 
         with open(credential_path, "w") as f:
             f.write(f"[{endpoint}]\n")
@@ -41,9 +42,10 @@ def add_credential(endpoint, credential_path="~/.dasstore/credentials"):
         creds = _parse_credential(credential_path)
 
         if endpoint not in creds:
-            print(f"Enter credential for [{endpoint}]:")
-            key = input("Input access key ID:        \t")
-            secret = input("Input secret access key: \t")
+            if key is None and secret is None:
+                print(f"Enter credential for [{endpoint}]:")
+                key = input("Input access key ID:        \t")
+                secret = input("Input secret access key: \t")
 
             with open(credential_path, "a") as f:
                 f.write(f"[{endpoint}]\n")
@@ -55,7 +57,7 @@ def add_credential(endpoint, credential_path="~/.dasstore/credentials"):
             print(f"Credential for [{endpoint}] already exist at [{credential_path}]")
 
 
-def replace_credential(endpoint, credential_path="~/.dasstore/credentials"):
+def replace_credential(endpoint, credential_path="~/.dasstore/credentials", key=None, secret=None):
     endpoint = endpoint.rstrip("/")
     if "~" in credential_path:
         credential_path = credential_path.replace("~", os.path.expanduser("~"))
@@ -63,15 +65,34 @@ def replace_credential(endpoint, credential_path="~/.dasstore/credentials"):
     if os.path.exists(credential_path):
         creds = _parse_credential(credential_path)
         if endpoint in creds:
-            print(f"Replacing credential for [{endpoint}]:")
-            key = input("Input access key ID:        \t")
-            secret = input("Input secret access key: \t")
+            if key is None and secret is None:
+                print(f"Replacing credential for [{endpoint}]:")
+                key = input("Input access key ID:        \t")
+                secret = input("Input secret access key: \t")
 
             creds[endpoint]["aws_access_key_id"] = key
             creds[endpoint]["aws_secret_access_key"] = secret
             _save_credential(creds, credential_path)
         else:
             raise ValueError(f"Credential for [{endpoint}] does not exist.")
+    else:
+        raise FileNotFoundError("Credential does not exist.")
+
+
+def remove_credential(endpoint, credential_path="~/.dasstore/credentials"):
+    endpoint = endpoint.rstrip("/")
+    if "~" in credential_path:
+        credential_path = credential_path.replace("~", os.path.expanduser("~"))
+
+    if os.path.exists(credential_path):
+        creds = _parse_credential(credential_path)
+    if os.path.exists(credential_path):
+        creds = _parse_credential(credential_path)
+        if endpoint in creds:
+            creds.pop(endpoint, None)
+            _save_credential(creds, credential_path)
+        else:
+            print(f"Endpoint [{endpoint}] not found. Skipping")
     else:
         raise FileNotFoundError("Credential does not exist.")
 
