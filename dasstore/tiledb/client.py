@@ -59,6 +59,7 @@ class Client:
 
         self.ctx = tiledb.Ctx(self.config)
 
+        self.storage_options = self.get_storage_options()
         self.meta = self.get_metadata()
 
         self._t0 = datetime.strptime(
@@ -108,13 +109,33 @@ class Client:
         ) as A:
             return A.multi_index[channels, istart:iend][attr]
 
+    def get_channel(self):
+        try:
+            import pandas as pd
+        except ModuleNotFoundError:
+            raise ModuleNotFoundError("Install pandas to read cable file.")
+
+        return pd.read_csv(
+            f"s3://{self.bucket}/cable.csv", storage_options=self.storage_options
+        )
+
     def get_metadata(self):
         with tiledb.open(f"s3://{self.bucket}/RawData", "r", ctx=self.ctx) as A:
             return dict(A.meta)
 
-    def _list_objects(self):
-        for i in self.minio.list_objects(self.bucket):
-            print(i.object_name)
+    def get_storage_options(self):
+        storage_options = {
+            "client_kwargs": {
+                "endpoint_url": f"{self.config['vfs.s3.scheme']}://{self.config['vfs.s3.endpoint_override']}"
+            }
+        }
+        if not self.role_assigned:
+            if self.anon:
+                storage_options["anon"] = True
+            else:
+                storage_options["key"] = self.config["vfs.s3.aws_access_key_id"]
+                storage_options["secret"] = self.config["vfs.s3.aws_secret_access_key"]
+        return storage_options
 
     def __str__(self):
         s = ""

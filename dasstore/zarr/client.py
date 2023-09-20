@@ -43,7 +43,7 @@ class Client:
         else:
             self.config["secure"] = "http"
 
-        self._get_storage_options()
+        self.storage_options = self.get_storage_options()
         self.meta = self.get_metadata()
 
         self._t0 = datetime.strptime(
@@ -87,7 +87,7 @@ class Client:
         iend = int((endtime - self._t0).total_seconds() * self._fs)
 
         A = zarr.open(
-            f"s3://{self.bucket}/RawData", "r", storage_options=self._storage_options
+            f"s3://{self.bucket}/RawData", "r", storage_options=self.storage_options
         )
 
         return A.oindex[channels, istart:iend]  # allowing list or numpy.array
@@ -99,31 +99,28 @@ class Client:
             raise ModuleNotFoundError("Install pandas to read cable file.")
 
         return pd.read_csv(
-            f"s3://{self.bucket}/cable.csv", storage_options=self._storage_options
+            f"s3://{self.bucket}/cable.csv", storage_options=self.storage_options
         )
 
     def get_metadata(self):
         A = zarr.open_array(
-            f"s3://{self.bucket}/RawData", "r", storage_options=self._storage_options
+            f"s3://{self.bucket}/RawData", "r", storage_options=self.storage_options
         )
         return dict(A.attrs)
 
-    def _get_storage_options(self):
-        self._storage_options = {
+    def get_storage_options(self):
+        storage_options = {
             "client_kwargs": {
                 "endpoint_url": f"{self.config['secure']}://{self.config['endpoint']}"
             }
         }
         if not self.role_assigned:
             if self.anon:
-                self._storage_options["anon"] = True
+                storage_options["anon"] = True
             else:
-                self._storage_options["key"] = self.config["key"]
-                self._storage_options["secret"] = self.config["secret"]
-
-    def _list_objects(self):
-        for i in self.minio.list_objects(self.bucket):
-            print(i.object_name)
+                storage_options["key"] = self.config["key"]
+                storage_options["secret"] = self.config["secret"]
+        return storage_options
 
     def __str__(self):
         s = ""
