@@ -20,14 +20,15 @@ for NPROC in [1, 2, 4, 8, 16, 32]:
                 t0 = time.time()
                 p0 = psutil.net_io_counters().bytes_recv
                 os.system(
-                    f"{MPIRUN} -np {NPROC} {PYTHON} ./mpi_minio_zarr.py --bucket {bucket}"
+                    f"{MPIRUN} -np {NPROC} {PYTHON} ./mpi_minio_zarr.py "
+                    "--bucket {bucket}"
                 )
                 t = time.time() - t0
                 p = (psutil.net_io_counters().bytes_recv - p0) / 1024**2
                 os.system("rm -rf /tmp/tmp*")
                 os.system(
-                    f"echo '{bucket},{TEST},pnwstore1,siletzia,{NPROC},%.3f,%.3f' >> ../data/benchmark.csv"
-                    % (t, p)
+                    f"echo '{bucket},{TEST},pnw,siletzia,{NPROC},%.3f,%.3f'"
+                    ">> ../data/benchmark.csv" % (t, p)
                 )
                 time.sleep(10)
     elif TEST == "minio_tiledb":
@@ -36,14 +37,15 @@ for NPROC in [1, 2, 4, 8, 16, 32]:
                 t0 = time.time()
                 p0 = psutil.net_io_counters().bytes_recv
                 os.system(
-                    f"{MPIRUN} -np {NPROC} {PYTHON} ./mpi_minio_tiledb.py --bucket {bucket}"
+                    f"{MPIRUN} -np {NPROC} {PYTHON} ./mpi_minio_tiledb.py"
+                    " --bucket {bucket}"
                 )
                 t = time.time() - t0
                 p = (psutil.net_io_counters().bytes_recv - p0) / 1024**2
                 os.system("rm -rf /tmp/tmp*")
                 os.system(
-                    f"echo '{bucket},{TEST},pnwstore1,siletzia,{NPROC},%.3f,%.3f' >> ../data/benchmark.csv"
-                    % (t, p)
+                    f"echo '{bucket},{TEST},pnw,siletzia,{NPROC},%.3f,%.3f' "
+                    ">> ../data/benchmark.csv" % (t, p)
                 )
                 time.sleep(10)
 
@@ -58,10 +60,14 @@ for NPROC in [1, 2, 4, 8, 16, 32]:
         for bucket in [1, 2, 3, 4, 5, 10, 50, 100, 500]:
             for _ in range(5):
                 t0 = time.time()
-                os.system(f"{MPIRUN} -np {NPROC} {PYTHON} ./mpi_local_h5_chunked.py --bucket {bucket}")
+                os.system(
+                    f"{MPIRUN} -np {NPROC} {PYTHON} ./mpi_local_h5_chunked.py"
+                    " --bucket {bucket}"
+                )
                 t = time.time() - t0
                 os.system(
-                    f"echo '{bucket},{TEST},{NPROC},%.3f' >> ../data/benchmark_h5_chunked.csv" % t
+                    f"echo '{bucket},{TEST},{NPROC},%.3f'"
+                    " >> ../data/benchmark_h5_chunked.csv" % t
                 )
                 print("Test finished in %.3f seconds" % t)
     elif TEST == "zarr+local":

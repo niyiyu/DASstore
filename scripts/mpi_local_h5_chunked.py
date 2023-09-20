@@ -1,9 +1,11 @@
-import hdf5plugin
+import argparse
+
 import h5py
+
+# import hdf5plugin
 import numpy as np
 from mpi4py import MPI
 from scipy import signal
-import argparse
 
 # parallelize with ompi
 comm = MPI.COMM_WORLD
@@ -15,6 +17,7 @@ parser.add_argument("-b", "--bucket", type=str, required=True)
 args = parser.parse_args()
 bucket = args.bucket
 
+
 def process(d):
     sos = signal.butter(
         2, [0.01, 1], "bp", fs=200, output="sos"
@@ -23,8 +26,9 @@ def process(d):
     d = d - np.mean(d)
     d *= taper
     filtered = signal.sosfilt(sos, d)
-    m = filtered.max()
+    _ = filtered.max()
     return d
+
 
 indexes = np.arange(5000)
 channel_index = np.array_split(indexes, size)[rank]
