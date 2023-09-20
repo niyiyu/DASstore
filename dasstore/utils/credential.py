@@ -19,13 +19,15 @@ def get_credential(endpoint, credential_path="~/.dasstore/credentials"):
         raise KeyError(f"No credential found for endpoint [{endpoint}]")
 
 
-def add_credential(endpoint, credential_path="~/.dasstore/credentials", key = None, secret = None):
+def add_credential(
+    endpoint, credential_path="~/.dasstore/credentials", key=None, secret=None
+):
     endpoint = endpoint.rstrip("/")
     if "~" in credential_path:
         credential_path = credential_path.replace("~", os.path.expanduser("~"))
 
     if not os.path.exists(credential_path):
-        os.makedirs(os.path.expanduser("~/.dasstore"), exist_ok=True)
+        os.makedirs(os.path.dirname(credential_path), exist_ok=True)
 
         if key is None and secret is None:
             print(f"Enter credential for [{endpoint}]:")
@@ -57,7 +59,9 @@ def add_credential(endpoint, credential_path="~/.dasstore/credentials", key = No
             print(f"Credential for [{endpoint}] already exist at [{credential_path}]")
 
 
-def replace_credential(endpoint, credential_path="~/.dasstore/credentials", key=None, secret=None):
+def replace_credential(
+    endpoint, credential_path="~/.dasstore/credentials", key=None, secret=None
+):
     endpoint = endpoint.rstrip("/")
     if "~" in credential_path:
         credential_path = credential_path.replace("~", os.path.expanduser("~"))
@@ -97,13 +101,7 @@ def remove_credential(endpoint, credential_path="~/.dasstore/credentials"):
         raise FileNotFoundError("Credential does not exist.")
 
 
-def _save_credential(creds, credential_path="~/.dasstore/credentials"):
-    if "~" in credential_path:
-        credential_path = credential_path.replace("~", os.path.expanduser("~"))
-
-    if not os.path.exists(credential_path):
-        os.makedirs(os.path.expanduser("~/.dasstore"), exist_ok=True)
-
+def _save_credential(creds, credential_path):
     with open(credential_path, "w") as f:
         for endpoint in creds:
             f.write(f"[{endpoint}]\n")
@@ -134,7 +132,4 @@ def _parse_credential(credential_path):
 
 
 def _chmod_credential(credential_path):
-    if "~" in credential_path:
-        credential_path = credential_path.replace("~", os.path.expanduser("~"))
-
     os.chmod(credential_path, 0o600)
