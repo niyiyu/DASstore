@@ -4,7 +4,7 @@ with open("requirements.txt") as f:
     reqs = f.read().split("\n")
 
 setup(
-    version="0.0.1",
+    version="0.2.0",
     name="dasstore",
     packages=find_packages(),
     include_package_data=True,
