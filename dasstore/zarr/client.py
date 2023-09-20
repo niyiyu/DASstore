@@ -1,5 +1,7 @@
 from datetime import datetime
 
+import logging
+
 import zarr
 
 from ..utils.credential import get_credential
@@ -51,6 +53,9 @@ class Client:
             self.meta["acquisition.acquisition_end_time"], "%Y-%m-%dT%H:%M:%S.%f"
         )
         self._fs = self.meta["acquisition.acquisition_sample_rate"]
+
+        for i in self.__str__().split("\n"):
+            logging.info(i)
 
     def get_data(self, channels, starttime, endtime, attr="RawData"):
         if isinstance(starttime, str):
@@ -123,9 +128,9 @@ class Client:
     def __str__(self):
         s = ""
         s += f"Endpoint:  \t {self.config['secure']}://{self.config['endpoint']}\n"
-        s += f"Path:    \t s3://{self.bucket} \n"
+        s += f"Path:      \t s3://{self.bucket} \n"
         s += f"Anonymous: \t {self.anon} \n"
-        s += f"Backend:   \t {self.backend}\n"
+        s += f"Backend:   \t {self.backend}"
 
         return s
 
