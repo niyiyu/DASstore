@@ -52,16 +52,23 @@ Public data service from UW-FiberLab will be available soon.
 
 ### Tutorial
 * Several tutorials about uploading data to the object storage using Zarr or TileDB backend is available at `/tutorials`.
-* A notebook to query 2-hour of 2023 Turkey earthquake SeaDAS data is available [here](https://colab.research.google.com/drive/19tY6DFhOC3_eWjV7e5j-WygGw63bjodP?usp=sharing) on Google colab.
-
-### Schema
-Updating soom.
+* A notebook to query 2-hour of 2023 Turkey earthquake SeaDAS data is available [here](https://colab.research.google.com/drive/19tY6DFhOC3_eWjV7e5j-WygGw63bjodP?usp=sharing) on Google Colab.
 
 ## Reference
+Ni, Y., Denolle, M. A., Fatland, R., Alterman, N., Lipovsky, B. P., Knuth, F. (2023). An Object Storage for Distributed Acoustic Sensing. Seismological Research Letters.
 
 BiBTex:
 ```bibtex
-
+@article{10.1785/0220230172,
+    author = {Ni, Yiyu and Denolle, Marine A. and Fatland, Rob and Alterman, Naomi and Lipovsky, Bradley P. and Knuth, Friedrich},
+    title = "{An Object Storage for Distributed Acoustic Sensing}",
+    journal = {Seismological Research Letters},
+    year = {2023},
+    month = {10},
+    issn = {0895-0695},
+    doi = {10.1785/0220230172},
+    url = {https://doi.org/10.1785/0220230172},
+}
 ```
 
 Links also below provides useful information about UW-FiberLab, the data, the format and the storage. If you have more questions, feel free to contact us.
