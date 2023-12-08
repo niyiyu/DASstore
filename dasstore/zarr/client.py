@@ -13,10 +13,10 @@ class Client:
         bucket,
         endpoint,
         region="",
-        secure=False,
         anon=False,
         role_assigned=False,
         credential_path="~/.dasstore/credentials",
+        secure=False,
     ):
         self.backend = "Zarr"
         if "s3://" in bucket:
@@ -38,10 +38,18 @@ class Client:
             self.config["key"] = self.credential["aws_access_key_id"]
             self.config["secret"] = self.credential["aws_secret_access_key"]
 
-        if self.secure:
+        if "https://" in endpoint:
+            self.secure = True
             self.config["secure"] = "https"
-        else:
+        elif "http://" in endpoint:
+            self.secure = False
             self.config["secure"] = "http"
+        else:
+            if self.secure:
+                self.config["endpoint"] = "https://" + self.config["endpoint"]
+            else:
+                self.config["endpoint"] = "http://" + self.config["endpoint"]
+            logging.warning(f'Endpoint overwrited: {self.config["endpoint"]}')
 
         self.storage_options = self.get_storage_options()
         self.meta = self.get_metadata()
@@ -109,11 +117,7 @@ class Client:
         return dict(A.attrs)
 
     def get_storage_options(self):
-        storage_options = {
-            "client_kwargs": {
-                "endpoint_url": f"{self.config['secure']}://{self.config['endpoint']}"
-            }
-        }
+        storage_options = {"client_kwargs": {"endpoint_url": self.config["endpoint"]}}
         if not self.role_assigned:
             if self.anon:
                 storage_options["anon"] = True
@@ -124,7 +128,7 @@ class Client:
 
     def __str__(self):
         s = ""
-        s += f"Endpoint:  \t {self.config['secure']}://{self.config['endpoint']}\n"
+        s += f"Endpoint:  \t {self.config['endpoint']}\n"
         s += f"Path:      \t s3://{self.bucket} \n"
         s += f"Anonymous: \t {self.anon} \n"
         s += f"Backend:   \t {self.backend}"

@@ -6,29 +6,12 @@
 ## Overview
 This work introduce a new storage solution for distributed acoustic sensing (DAS) data. We introduce object storage that has been widely used in commercial cloud storage (AWS S3, Azure Blob, etc.) to a local data server. Instead of hosting data in the HDF5 format, we proposed hosting DAS data in the Zarr format that is optimized for cloud environment.
 
-## Data Server (MinIO) Deployment
-MinIO can run as Single-Node Single-Drive (SNSD). See documentation [here](https://min.io/docs/minio/linux/operations/install-deploy-manage/deploy-minio-single-node-single-drive.html) for more detail. Simple deployment using Docker is shown below.
-```bash
-# pull MinIO image
-docker pull minio/minio
-
-# 9000: url endpoint port
-# 9001: console port
-docker run -p 9000:9000 -p 9001:9001 --name minio \
-    -v <PATH/TO/DB> \
-    -e MINIO_ROOT_USER= <ADMIN-USER> \
-    -e MINIO_ROOT_PASSWORD= <ADMIN-PASSWORD> \
-    -d minio/minio server /data --console-address ":9001"
-```
-
-Alternatively, users can deploy MinIO in the Single-Node Multiple-Drive mode (SNMD). Documentation of more advanced deployments can be found [here](https://min.io/docs/minio/linux/operations/install-deploy-manage/deploy-minio-single-node-multi-drive.html).
-
 ## Data Client
 We provide a Python client to conveniently query the data with a Zarr backend. The client supports either anonymous access for public bucket, or private bucket (access key and secret required).
 ```python
 from dasstore.zarr import Client
 
-client = Client(BUCKET, ENDPOINT_URL, anon = False, secure = False)
+client = Client(BUCKET, ENDPOINT_URL)
 
 # get 20-minute data from one subarray (channel 500 - 1000)
 client.get_data(np.arange(500, 1000),
@@ -48,11 +31,29 @@ client.get_channel()
 ```
 
 ## Public data service
-Public data service from UW-FiberLab will be available soon.
+We are making one month of SeaDAS-N data (December 2022) available (anonymous access allowed). See the tutorials below for data access.
 
 ### Tutorial
 * Several tutorials about uploading data to the object storage using Zarr or TileDB backend is available at `/tutorials`.
 * A notebook to query 2-hour of 2023 Turkey earthquake SeaDAS data is available [here](https://colab.research.google.com/drive/19tY6DFhOC3_eWjV7e5j-WygGw63bjodP?usp=sharing) on Google Colab.
+
+## Data Server (MinIO) Deployment
+MinIO can run as Single-Node Single-Drive (SNSD). See documentation [here](https://min.io/docs/minio/linux/operations/install-deploy-manage/deploy-minio-single-node-single-drive.html) for more detail. Simple deployment using Docker is shown below.
+```bash
+# pull MinIO image
+docker pull minio/minio
+
+# 9000: url endpoint port
+# 9001: console port
+docker run -p 9000:9000 -p 9001:9001 --name minio \
+    -v <PATH/TO/DB> \
+    -e MINIO_ROOT_USER= <ADMIN-USER> \
+    -e MINIO_ROOT_PASSWORD= <ADMIN-PASSWORD> \
+    -d minio/minio server /data --console-address ":9001"
+```
+
+Alternatively, users can deploy MinIO in the Single-Node Multiple-Drive mode (SNMD). Documentation of more advanced deployments can be found [here](https://min.io/docs/minio/linux/operations/install-deploy-manage/deploy-minio-single-node-multi-drive.html).
+
 
 ## Reference
 Ni, Y., Denolle, M. A., Fatland, R., Alterman, N., Lipovsky, B. P., Knuth, F. (2023). An Object Storage for Distributed Acoustic Sensing. Seismological Research Letters.
