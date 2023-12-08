@@ -30,15 +30,15 @@ client.get_metadata()
 client.get_channel()
 ```
 
-## Public data service
-We are making one month of SeaDAS-N data (December 2022) available (anonymous access allowed). See the tutorials below for data access.
+## Data Service and Tutorial
+The DASway (https://dasway.ess.washington.edu) is a dedicated object storage server providing data service.
 
-### Tutorial
-* Several tutorials about uploading data to the object storage using Zarr or TileDB backend is available at `/tutorials`.
+* **We are opening one month of SeaDAS-N data (December 2022) through DASway.** Check Google Colab [notebook](https://colab.research.google.com/drive/112-rt1iCj-v6mHDVajfnJAYyVjxNDT9o?usp=sharing) how to access through DASstore.
 * A notebook to query 2-hour of 2023 Turkey earthquake SeaDAS data is available [here](https://colab.research.google.com/drive/19tY6DFhOC3_eWjV7e5j-WygGw63bjodP?usp=sharing) on Google Colab.
+* Several tutorials about uploading data to the object storage using Zarr or TileDB backend is available at `/tutorials`.
 
-## Data Server (MinIO) Deployment
-MinIO can run as Single-Node Single-Drive (SNSD). See documentation [here](https://min.io/docs/minio/linux/operations/install-deploy-manage/deploy-minio-single-node-single-drive.html) for more detail. Simple deployment using Docker is shown below.
+## Data Server Deployment
+We use MinIO to deploy the local object storage. MinIO can run as Single-Node Single-Drive (SNSD). See documentation [here](https://min.io/docs/minio/linux/operations/install-deploy-manage/deploy-minio-single-node-single-drive.html) for more detail. Simple deployment using Docker is shown below.
 ```bash
 # pull MinIO image
 docker pull minio/minio
