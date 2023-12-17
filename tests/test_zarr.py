@@ -1,12 +1,20 @@
 import numpy as np
 from dasstore.zarr import Client
 
-client = Client("niyiyu/dasstore-demo-zarr", "dasway.ess.washington.edu")
-client = Client("niyiyu/dasstore-demo-zarr", "dasway.ess.washington.edu", anon=True)
-client = Client("niyiyu/dasstore-demo-zarr", "dasway.ess.washington.edu", secure=True)
-client = Client("niyiyu/dasstore-demo-zarr", "dasway.ess.washington.edu", anon=True)
+client = Client("shared/niyiyu/dasstore-demo-zarr", "https://dasway.ess.washington.edu")
 client = Client(
-    "s3://niyiyu/dasstore-demo-zarr", "dasway.ess.washington.edu", anon=True
+    "shared/niyiyu/dasstore-demo-zarr", "https://dasway.ess.washington.edu", anon=True
+)
+client = Client(
+    "shared/niyiyu/dasstore-demo-zarr", "https://dasway.ess.washington.edu", secure=True
+)
+client = Client(
+    "shared/niyiyu/dasstore-demo-zarr", "https://dasway.ess.washington.edu", anon=True
+)
+client = Client(
+    "s3://shared/niyiyu/dasstore-demo-zarr",
+    "https://dasway.ess.washington.edu",
+    anon=True,
 )
 
 metadata = client.meta

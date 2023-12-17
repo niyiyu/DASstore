@@ -13,7 +13,6 @@ class Client:
         bucket,
         endpoint,
         region="",
-        secure=False,
         use_virtual_addressing=False,
         anon=False,
         role_assigned=False,
@@ -26,12 +25,23 @@ class Client:
             self.bucket = bucket
         self.anon = anon
         self.role_assigned = role_assigned
-        self.secure = secure
         self.use_virtual_addressing = use_virtual_addressing
 
         self.config = tiledb.Config()
         self.config["vfs.s3.region"] = region
         self.config["vfs.s3.endpoint_override"] = endpoint.rstrip("/")
+
+        if "https://" in endpoint:
+            self.config["vfs.s3.scheme"] = "https"
+        elif "http://" in endpoint:
+            self.config["vfs.s3.scheme"] = "http"
+        else:
+            self.config["vfs.s3.endpoint_override"] = (
+                "https://" + self.config["vfs.s3.endpoint_override"]
+            )
+            logging.warning(
+                f'Endpoint overwrited: {self.config["vfs.s3.endpoint_override"]}'
+            )
 
         if self.role_assigned:
             pass
@@ -51,11 +61,6 @@ class Client:
             self.config["vfs.s3.use_virtual_addressing"] = "true"
         else:
             self.config["vfs.s3.use_virtual_addressing"] = "false"
-
-        if self.secure:
-            self.config["vfs.s3.scheme"] = "https"
-        else:
-            self.config["vfs.s3.scheme"] = "http"
 
         self.ctx = tiledb.Ctx(self.config)
 
@@ -126,7 +131,7 @@ class Client:
     def get_storage_options(self):
         storage_options = {
             "client_kwargs": {
-                "endpoint_url": f"{self.config['vfs.s3.scheme']}://{self.config['vfs.s3.endpoint_override']}"
+                "endpoint_url": f"{self.config['vfs.s3.endpoint_override']}"
             }
         }
         if not self.role_assigned:
@@ -139,7 +144,7 @@ class Client:
 
     def __str__(self):
         s = ""
-        s += f"Endpoint:  \t {self.config['vfs.s3.scheme']}://{self.config['vfs.s3.endpoint_override']}\n"
+        s += f"Endpoint:  \t {self.config['vfs.s3.endpoint_override']}\n"
         s += f"Path:      \t s3://{self.bucket} \n"
         s += f"Anonymous: \t {self.anon} \n"
         s += f"Backend:   \t {self.backend}"

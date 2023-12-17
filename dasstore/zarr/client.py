@@ -16,7 +16,7 @@ class Client:
         anon=False,
         role_assigned=False,
         credential_path="~/.dasstore/credentials",
-        secure=False,
+        secure=True,
     ):
         self.backend = "Zarr"
         if "s3://" in bucket:
