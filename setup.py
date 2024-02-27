@@ -12,7 +12,7 @@ setup(
     install_requires=reqs,
     author="Yiyu Ni",
     author_email="niyiyu@uw.edu",
-    description="An object storage system for Distributed Acoustic Sensing data",
+    description="An object storage system for Distributed Acoustic Sensing",
     license="GPL-3.0 license",
     url="https://github.com/niyiyu/dasstore",
 )
