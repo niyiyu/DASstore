@@ -3,6 +3,7 @@ from datetime import datetime
 import logging
 
 import tiledb
+import pandas as pd
 
 from ..utils.credential import get_credential
 
@@ -115,11 +116,6 @@ class Client:
             return A.multi_index[channels, istart:iend][attr]
 
     def get_channel(self):
-        try:
-            import pandas as pd
-        except ModuleNotFoundError:
-            raise ModuleNotFoundError("Install pandas to read cable file.")
-
         return pd.read_csv(
             f"s3://{self.bucket}/cable.csv", storage_options=self.storage_options
         )
