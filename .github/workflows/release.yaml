@@ -1,0 +1,132 @@
+name: Release
+
+on:
+  release:
+    types: [published, edited]
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-artifact:
+    name: Build DASstore package
+    runs-on: ubuntu-22.04
+    if: github.repository == 'niyiyu/dasstore'
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0 # Fetch all history for all branches and tags.
+    - name: Set up Python
+      uses: actions/setup-python@v4.5.0
+      with:
+        python-version: 3.9
+    - name: Install dependencies
+      run: python -m pip install build
+
+    - name: Build source and wheel distributions
+      run: |
+        python -m build
+        echo ""
+        echo "Generated files:"
+        ls -lh dist/
+    - uses: actions/upload-artifact@v3
+      with:
+        name: releases
+        path: dist
+  test-built-dist:
+    name: Test DASstore package
+    needs: build-artifact
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/setup-python@v4.5.0
+      name: Install Python
+      with:
+        python-version: 3.9
+    - uses: actions/download-artifact@v3
+      with:
+        name: releases
+        path: dist
+    - name: List contents of built dist
+      run: |
+        ls -ltrh
+        ls -ltrh dist
+    - name: Publish to Test PyPI
+      uses: pypa/gh-action-pypi-publish@v1.8.5
+      with:
+        password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+        repository_url: https://test.pypi.org/legacy/
+        verbose: true
+        skip_existing: true
+    - name: Check pypi packages
+      id: check_pkg
+      run: |
+        # Install local wheel to get the version number
+        pip install dist/dasstore*.whl
+        latest_version="$(python -c 'import dasstore; print(dasstore.__version__)')";export latest_version
+        echo "latest_version=$latest_version"  >> $GITHUB_OUTPUT
+        echo "=== Got version $latest_version from local wheel install ==="
+        python -m pip uninstall --yes dasstore
+        sleep 5
+
+        python -m pip install --upgrade pip
+        echo "=== Testing wheel file ==="
+        # Install wheel to get dependencies and check import
+        python -m pip install --extra-index-url https://test.pypi.org/simple --upgrade --pre dasstore==$latest_version
+        echo "=== Done testing wheel file ==="
+        echo "=== Testing source tar file ==="
+
+        # Install tar gz and check import
+        python -m pip uninstall --yes dasstore
+        python -m pip install --extra-index-url https://test.pypi.org/simple --upgrade --pre --no-binary=dasstore dasstore==$latest_version
+        python -c "import dasstore; print(dasstore.__version__)"
+        echo "=== Done testing source tar file ==="
+    outputs:
+      package-version: ${{steps.check_pkg.outputs.latest_version}}
+  publish-pypi:
+    name: Push DASstore to production pypi
+    needs: test-built-dist
+    if: startsWith(github.ref, 'refs/tags')
+    runs-on: ubuntu-22.04
+    permissions:
+      id-token: write
+    steps:
+    - uses: actions/download-artifact@v3
+      with:
+        name: releases
+        path: dist
+    - name: Publish to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
+  push_to_registry:
+    name: Push Docker image to Docker Hub
+    needs: [publish-pypi, test-built-dist]
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Delay for PyPI
+        run: sleep 5 # Wait for the package to be available in PyPI
+      - name: Check out the repo
+        uses: actions/checkout@v3
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+      - name: Log in to registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          platforms: linux/amd64
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          push: ${{ github.event_name != 'pull_request' }}
+          build-args: VERSION=${{needs.test-built-dist.outputs.package-version}}
