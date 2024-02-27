@@ -137,3 +137,9 @@ dmypy.json
 
 # notebooks
 notebooks/
+
+# Version file generated at build time
+dasstore/_version.py
+
+# MacOS
+.DS_Store

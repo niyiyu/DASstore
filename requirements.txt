@@ -1,5 +1,0 @@
-zarr
-tiledb==0.23.0
-s3fs
-fsspec
-pandas
