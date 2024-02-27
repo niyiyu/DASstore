@@ -7,7 +7,11 @@ buckets = [
     "shared/niyiyu/dasstore-demo-tiledb",
     "s3://shared/niyiyu/dasstore-demo-tiledb",
 ]
-endpoints = ["https://dasway.ess.washington.edu"]
+endpoints = [
+    "https://dasway.ess.washington.edu",
+    "http://dasway.ess.washington.edu",
+    "dasway.ess.washington.edu",
+]
 anons = [True]
 times1 = [["2021-11-02T00:00:14", "2021-11-02T00:01:14"]]
 times2 = [
