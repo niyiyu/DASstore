@@ -1,90 +1,55 @@
 import os
 
+import pytest
+
 from dasstore.utils.credential import (
     add_credential,
     get_credential,
-    replace_credential,
     remove_credential,
+    replace_credential,
 )
 
-## test existing credential
-add_credential("test", key="test_key", secret="test_secret")
-cred = get_credential("test")
-assert cred["aws_access_key_id"] == "test_key"
-assert cred["aws_secret_access_key"] == "test_secret"
+paths = ["~/.dasstore/test", "~/.dasstore_tmp/test"]
+endpoints = ["test1", "test2"]
 
-replace_credential("test", key="test_key2", secret="test_secret2")
-cred = get_credential("test")
-assert cred["aws_access_key_id"] == "test_key2"
-assert cred["aws_secret_access_key"] == "test_secret2"
 
-remove_credential("test")
+@pytest.mark.parametrize("path", paths)
+@pytest.mark.parametrize("endpoint", endpoints)
+def test_add_credential(endpoint, path):
+    key = f"{endpoint}_key"
+    secret = f"{endpoint}_secret"
+    add_credential(endpoint, credential_path=path, key=key, secret=secret)
+    cred = get_credential(endpoint, credential_path=path)
+    assert cred["aws_access_key_id"] == key
+    assert cred["aws_secret_access_key"] == secret
 
-## test new credential file
-add_credential(
-    "test", credential_path="~/.dasstore/test", key="test_key", secret="test_secret"
-)
 
-## add for the second time
-add_credential(
-    "test", credential_path="~/.dasstore/test", key="test_key", secret="test_secret"
-)
-cred = get_credential("test", credential_path="~/.dasstore/test")
-assert cred["aws_access_key_id"] == "test_key"
-assert cred["aws_secret_access_key"] == "test_secret"
+@pytest.mark.parametrize("path", paths)
+@pytest.mark.parametrize("endpoint", endpoints)
+def test_replace_credential(endpoint, path):
+    key = f"{endpoint}_key_update"
+    secret = f"{endpoint}_secret_update"
+    replace_credential(endpoint, credential_path=path, key=key, secret=secret)
+    cred = get_credential(endpoint, credential_path=path)
+    assert cred["aws_access_key_id"] == key
+    assert cred["aws_secret_access_key"] == secret
 
-replace_credential(
-    "test", credential_path="~/.dasstore/test", key="test_key2", secret="test_secret2"
-)
-try:
-    replace_credential(
-        "test2",
-        credential_path="~/.dasstore/test",
-        key="test_key2",
-        secret="test_secret2",
-    )
-except ValueError:
-    pass
 
-try:
-    replace_credential(
-        "test",
-        credential_path="~/.dasstore/test2",
-        key="test_key2",
-        secret="test_secret2",
-    )
-except FileNotFoundError:
-    pass
+@pytest.mark.parametrize("path", paths)
+@pytest.mark.parametrize("endpoint", endpoints)
+def test_remove_credential(endpoint, path):
+    remove_credential(endpoint, credential_path=path)
+    with pytest.raises(KeyError):
+        get_credential(endpoint, credential_path=path)
 
-cred = get_credential("test", credential_path="~/.dasstore/test")
-assert cred["aws_access_key_id"] == "test_key2"
-assert cred["aws_secret_access_key"] == "test_secret2"
 
-## remove credential
-remove_credential("test", credential_path="~/.dasstore/test")
+@pytest.mark.parametrize("path", paths)
+@pytest.mark.parametrize("endpoint", endpoints)
+def test_remove_undefined_credential(endpoint, path):
+    remove_credential(endpoint, credential_path=path)
 
-## remove for the second time
-remove_credential("test", credential_path="~/.dasstore/test")
 
-try:
-    remove_credential("test", credential_path="~/.dasstore/test2")
-except FileNotFoundError:
-    pass
-
-## test non-exist directory
-add_credential(
-    "test", "~/.dasstore_tmp/credentials", key="testk_ey", secret="test_secret"
-)
-os.system(f"rm -rf {os.path.expanduser('~/')}.dasstore_tmp")
-
-## test non-exist endpoint
-try:
-    get_credential("test", credential_path="~/.dasstore/test")
-except KeyError:
-    pass
-
-## test non-exist file
-try:
-    get_credential("test", "~/test")
-except FileNotFoundError:
-    pass
+@pytest.mark.parametrize("path", paths)
+def test_remove_credential_file(path):
+    os.system(f"rm {path}")
+    assert not os.path.exists(path)
