@@ -8,7 +8,7 @@ setup(
     name="dasstore",
     packages=find_packages(),
     include_package_data=True,
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     install_requires=reqs,
     author="Yiyu Ni",
     author_email="niyiyu@uw.edu",

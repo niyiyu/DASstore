@@ -6,13 +6,10 @@
 name: Unit-test
 
 on:
-
-  # Runs this workflow automatically
-  schedule:
-    - cron: 45 6 * * *
-
-  # Allows you to run this workflow manually from the Actions tab
+  pull_request:
+  push: { branches: [main] }
   workflow_dispatch:
+
 
 jobs:
   build:
@@ -33,6 +30,7 @@ jobs:
         sudo apt-get update
         python -m pip install --upgrade pip
         pip install .
+        pip install pytest pytest-cov pre-commit
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: List dependencies
       run: |
