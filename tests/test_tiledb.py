@@ -2,9 +2,6 @@ import numpy as np
 from dasstore.tiledb import Client
 
 client = Client(
-    "shared/niyiyu/dasstore-demo-tiledb", "https://dasway.ess.washington.edu"
-)
-client = Client(
     "shared/niyiyu/dasstore-demo-tiledb", "https://dasway.ess.washington.edu", anon=True
 )
 client = Client(
