@@ -56,19 +56,19 @@ Alternatively, users can deploy MinIO in the Single-Node Multiple-Drive mode (SN
 
 
 ## Reference
-Ni, Y., Denolle, M. A., Fatland, R., Alterman, N., Lipovsky, B. P., Knuth, F. (2023). An Object Storage for Distributed Acoustic Sensing. Seismological Research Letters.
+Ni, Y., Denolle, M. A., Fatland, R., Alterman, N., Lipovsky, B. P., & Knuth, F. (2024). An Object Storage for Distributed Acoustic Sensing. Seismological Research Letters, 95(1), 499-511.
 
 BiBTex:
 ```bibtex
-@article{10.1785/0220230172,
-    author = {Ni, Yiyu and Denolle, Marine A. and Fatland, Rob and Alterman, Naomi and Lipovsky, Bradley P. and Knuth, Friedrich},
-    title = "{An Object Storage for Distributed Acoustic Sensing}",
-    journal = {Seismological Research Letters},
-    year = {2023},
-    month = {10},
-    issn = {0895-0695},
-    doi = {10.1785/0220230172},
-    url = {https://doi.org/10.1785/0220230172},
+@@article{ni2024object,
+    title={An Object Storage for Distributed Acoustic Sensing},
+    author={Ni, Yiyu and Denolle, Marine A and Fatland, Rob and Alterman, Naomi and Lipovsky, Bradley P and Knuth, Friedrich},
+    journal={Seismological Research Letters},
+    volume={95},
+    number={1},
+    pages={499--511},
+    year={2024},
+    publisher={Seismological Society of America}
 }
 ```
 

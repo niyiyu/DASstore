@@ -38,3 +38,7 @@ jobs:
     - name: Run unit tests with pytest
       run: |
         PYTHONPATH=. pytest tests --cov
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v3
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
