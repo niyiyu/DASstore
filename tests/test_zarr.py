@@ -1,12 +1,8 @@
 import numpy as np
 from dasstore.zarr import Client
 
-client = Client("shared/niyiyu/dasstore-demo-zarr", "https://dasway.ess.washington.edu")
 client = Client(
     "shared/niyiyu/dasstore-demo-zarr", "https://dasway.ess.washington.edu", anon=True
-)
-client = Client(
-    "shared/niyiyu/dasstore-demo-zarr", "https://dasway.ess.washington.edu", secure=True
 )
 client = Client(
     "shared/niyiyu/dasstore-demo-zarr", "https://dasway.ess.washington.edu", anon=True
