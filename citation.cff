@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "Please cite the following reference if you use the code for your work:"
+authors:
+- family-names: "Ni"
+  given-names: "Yiyu"
+- family-names: "Denolle"
+  given-names: "Marine"
+- family-names: "Fatland"
+  given-names: "Rob"
+- family-names: "Alterman"
+  given-names: "Naomi"
+- family-names: "Lipovsky"
+  given-names: "Bradley"
+- family-names: "Friedrich"
+  given-names: "Knuth"
+title: "An Object Storage for Distributed Acoustic Sensing"
+date-released: 2024
+doi: https://doi.org/10.1785/0220230172
+url: "https://github.com/niyiyu/dasstore.git"

@@ -3,7 +3,7 @@
 # See documentation for help debugging smoke test issues:
 #    https://lincc-ppt.readthedocs.io/en/latest/practices/ci_testing.html#version-culprit
 
-name: Unit-test
+name: client io test
 
 on:
   pull_request:
