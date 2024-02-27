@@ -12,7 +12,8 @@ jobs:
   build-artifact:
     name: Build DASstore package
     runs-on: ubuntu-22.04
-    if: github.repository == 'niyiyu/dasstore'
+    permissions:
+      id-token: write
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -48,10 +49,6 @@ jobs:
       with:
         name: releases
         path: dist
-    - name: List contents of built dist
-      run: |
-        ls -ltrh
-        ls -ltrh dist
     - name: Publish to Test PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
