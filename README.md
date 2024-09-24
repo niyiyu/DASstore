@@ -1,6 +1,5 @@
 # DASstore: an object storage for Distributed Acoustic Sensing
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![DOI](https://zenodo.org/badge/566535376.svg)](https://zenodo.org/badge/latestdoi/566535376)
 [![codecov](https://codecov.io/github/niyiyu/DASstore/graph/badge.svg?token=AO893P0KQG)](https://codecov.io/github/niyiyu/DASstore)
 ![Lifecycle:Experimental](https://img.shields.io/badge/Lifecycle-Experimental-339999)
 
